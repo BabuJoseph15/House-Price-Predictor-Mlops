@@ -16,11 +16,15 @@ class ModelTrainer:
 
     def initiate_model_trainer(self):
 
+        print("Starting Data Transformation...")
+
         transformer = DataTransformation()
 
         X_train, X_test, y_train, y_test = (
             transformer.initiate_data_transformation()
         )
+
+        print("Starting MLflow Experiment...")
 
         mlflow.set_experiment(
             "House_Price_Prediction"
@@ -30,13 +34,18 @@ class ModelTrainer:
 
             model = RandomForestRegressor(
                 n_estimators=100,
-                random_state=42
+                random_state=42,
+                n_jobs=-1
             )
+
+            print("Training Model...")
 
             model.fit(
                 X_train,
                 y_train
             )
+
+            print("Making Predictions...")
 
             y_pred = model.predict(
                 X_test
@@ -59,9 +68,25 @@ class ModelTrainer:
                 ) ** 0.5
             )
 
+            print("\nModel Metrics")
+            print("-" * 30)
+            print(f"R2 Score : {r2:.4f}")
+            print(f"MAE      : {mae:.2f}")
+            print(f"RMSE     : {rmse:.2f}")
+
+            mlflow.log_param(
+                "model_name",
+                "RandomForestRegressor"
+            )
+
             mlflow.log_param(
                 "n_estimators",
                 100
+            )
+
+            mlflow.log_param(
+                "random_state",
+                42
             )
 
             mlflow.log_metric(
@@ -80,8 +105,8 @@ class ModelTrainer:
             )
 
             mlflow.sklearn.log_model(
-                model,
-                "random_forest_model"
+                sk_model=model,
+                artifact_path="random_forest_model"
             )
 
             joblib.dump(
@@ -89,8 +114,12 @@ class ModelTrainer:
                 "artifacts/model.pkl"
             )
 
-            print(f"R2 Score : {r2:.4f}")
-            print(f"MAE      : {mae:.2f}")
-            print(f"RMSE     : {rmse:.2f}")
+            print("\nModel saved successfully")
+            print("MLflow logging completed")
 
-            print("Model saved successfully")
+
+if __name__ == "__main__":
+
+    trainer = ModelTrainer()
+
+    trainer.initiate_model_trainer()
