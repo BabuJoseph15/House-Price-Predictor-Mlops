@@ -47,5 +47,5 @@ if __name__ == "__main__":
     result = predictor.predict(sample_data)
 
     print(
-        f"Predicted House Price: ${result[0\]:,.2f}"
+         f"Predicted House Price: ${result[0\\]:,.2f}"   
     )
