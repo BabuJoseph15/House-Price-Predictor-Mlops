@@ -69,7 +69,7 @@ class ModelTrainer:
             )
 
             print("\nModel Metrics")
-            print("-" * 30)
+            print("-" * 40)
             print(f"R2 Score : {r2:.4f}")
             print(f"MAE      : {mae:.2f}")
             print(f"RMSE     : {rmse:.2f}")
@@ -106,8 +106,23 @@ class ModelTrainer:
 
             mlflow.sklearn.log_model(
                 sk_model=model,
-                artifact_path="random_forest_model"
+                name="random_forest_model"
             )
+
+            try:
+
+                result = mlflow.register_model(
+                    f"runs:/{mlflow.active_run().info.run_id}/random_forest_model",
+                    "HousePriceModel"
+                )
+
+                print("Model Registered Successfully")
+
+            except Exception as e:
+
+                print(
+                    f"Model Registration Skipped: {e}"
+                )
 
             joblib.dump(
                 model,
