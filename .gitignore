@@ -1,0 +1,5 @@
+artifacts/
+mlruns/
+venv/
+__pycache__/
+*.pyc

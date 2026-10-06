@@ -1,0 +1,9 @@
+pandas
+numpy
+scikit-learn
+flask
+joblib
+pyyaml
+mlflow-skinny
+prometheus-client
+gunicorn
