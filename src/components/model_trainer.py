@@ -2,6 +2,8 @@ import joblib
 import mlflow
 import mlflow.sklearn
 
+from mlflow.models import infer_signature
+
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import (
     r2_score,
@@ -61,11 +63,12 @@ class ModelTrainer:
                 y_pred
             )
 
-            rmse = (
+            rmse = ( 
                 mean_squared_error(
                     y_test,
-                    y_pred
+                    y_pred,
                 ) ** 0.5
+
             )
 
             print("\nModel Metrics")
@@ -74,6 +77,7 @@ class ModelTrainer:
             print(f"MAE      : {mae:.2f}")
             print(f"RMSE     : {rmse:.2f}")
 
+            # Log Parameters
             mlflow.log_param(
                 "model_name",
                 "RandomForestRegressor"
@@ -89,6 +93,7 @@ class ModelTrainer:
                 42
             )
 
+            # Log Metrics
             mlflow.log_metric(
                 "r2_score",
                 r2
@@ -104,11 +109,21 @@ class ModelTrainer:
                 rmse
             )
 
-            mlflow.sklearn.log_model(
-                sk_model=model,
-                name="random_forest_model"
+            # MLflow Signature
+            signature = infer_signature(
+                X_train,
+                model.predict(X_train)
             )
 
+            # Log Model
+            mlflow.sklearn.log_model(
+                sk_model=model,
+                name="random_forest_model",
+                signature=signature,
+                input_example=X_train[:5]
+            )
+
+            # Register Model
             try:
 
                 result = mlflow.register_model(
@@ -116,7 +131,9 @@ class ModelTrainer:
                     "HousePriceModel"
                 )
 
-                print("Model Registered Successfully")
+                print(
+                    f"Model Registered Successfully. Version: {result.version}"
+                )
 
             except Exception as e:
 
@@ -124,6 +141,7 @@ class ModelTrainer:
                     f"Model Registration Skipped: {e}"
                 )
 
+            # Save Model Locally
             joblib.dump(
                 model,
                 "artifacts/model.pkl"
