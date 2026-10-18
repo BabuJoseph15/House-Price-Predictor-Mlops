@@ -19,14 +19,18 @@ pipeline {
         stage('Verify Environment') {
             steps {
                 sh '''
-                    echo "===== Docker Version ====="
                     docker --version
-
-                    echo "===== Kubernetes Client ====="
                     kubectl version --client
-
-                    echo "===== Minikube Status ====="
                     kubectl get nodes
+                '''
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                sh '''
+                    pip install -r requirements.txt
+                    pytest tests/ -v
                 '''
             }
         }
@@ -34,11 +38,23 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                    echo "Building Docker image..."
-
                     docker build \
                     -t ${IMAGE_NAME}:${IMAGE_TAG} \
                     -t ${IMAGE_NAME}:latest .
+                '''
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                sh '''
+                    echo "Running Trivy Security Scan..."
+
+                    trivy image \
+                    --severity HIGH,CRITICAL \
+                    --exit-code 1 \
+                    --no-progress \
+                    ${IMAGE_NAME}:${IMAGE_TAG}
                 '''
             }
         }
@@ -64,8 +80,6 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 sh '''
-                    echo "Pushing image ${IMAGE_TAG}"
-
                     docker push ${IMAGE_NAME}:${IMAGE_TAG}
                     docker push ${IMAGE_NAME}:latest
                 '''
@@ -76,8 +90,6 @@ pipeline {
             steps {
                 sh '''
                     export KUBECONFIG=/var/lib/jenkins/.kube/config
-
-                    echo "Deploying application..."
 
                     kubectl apply --validate=false -f deployment.yaml
                     kubectl apply --validate=false -f service.yaml
@@ -90,17 +102,11 @@ pipeline {
                 sh '''
                     export KUBECONFIG=/var/lib/jenkins/.kube/config
 
-                    echo "===== Deployments ====="
-                    kubectl get deployments
-
-                    echo "===== Pods ====="
-                    kubectl get pods
-
-                    echo "===== Services ====="
-                    kubectl get svc
-
-                    echo "===== Rollout Status ====="
                     kubectl rollout status deployment/house-price-api --timeout=300s
+
+                    kubectl get deployments
+                    kubectl get pods
+                    kubectl get svc
                 '''
             }
         }
