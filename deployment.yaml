@@ -21,9 +21,9 @@ spec:
       containers:
         - name: house-price-api
 
-          image: house-price-api:v4
+          image: house-price-api:14
 
-          imagePullPolicy: Never
+          imagePullPolicy: Always
 
           ports:
             - containerPort: 8000
