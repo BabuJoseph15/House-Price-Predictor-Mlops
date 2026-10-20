@@ -23,7 +23,7 @@ pipeline {
         stage('Verify Files') {
             steps {
                 sh '''
-                echo "=== Project Files ==="
+                echo "===== PROJECT FILES ====="
                 pwd
                 ls -la
 
@@ -47,13 +47,22 @@ pipeline {
             }
         }
 
+        stage('Validate Dependencies') {
+            steps {
+                sh '''
+                pip check
+                '''
+            }
+        }
+
         stage('Run Unit Tests') {
             steps {
                 sh '''
+                export PYTHONPATH=$WORKSPACE
+
                 if [ -d "tests" ]; then
                     echo "Running Unit Tests..."
-
-                    python3 -m pytest tests/ -v
+                    pytest tests/ -v
                 else
                     echo "No tests directory found. Skipping..."
                 fi
@@ -73,8 +82,9 @@ pipeline {
         stage('Trivy Security Scan') {
             steps {
                 sh '''
-                trivy image --severity HIGH,CRITICAL \
-                ${DOCKER_IMAGE}:${BUILD_NUMBER} || true
+                trivy image \
+                  --severity HIGH,CRITICAL \
+                  ${DOCKER_IMAGE}:${BUILD_NUMBER} || true
                 '''
             }
         }
@@ -119,13 +129,13 @@ pipeline {
                 sh '''
                 export KUBECONFIG=${KUBECONFIG}
 
-                echo "=== Deployments ==="
+                echo "===== DEPLOYMENTS ====="
                 kubectl get deployments
 
-                echo "=== Pods ==="
+                echo "===== PODS ====="
                 kubectl get pods -o wide
 
-                echo "=== Services ==="
+                echo "===== SERVICES ====="
                 kubectl get svc
                 '''
             }
@@ -139,16 +149,20 @@ pipeline {
         }
 
         failure {
-            echo '❌ Pipeline failed. Please check Jenkins console logs.'
+            echo '❌ Pipeline failed. Collecting diagnostics...'
 
             sh '''
             export KUBECONFIG=${KUBECONFIG}
 
-            echo "=== Pods ==="
+            echo "===== PODS ====="
             kubectl get pods || true
 
-            echo "=== Recent Events ==="
-            kubectl get events --sort-by=.metadata.creationTimestamp | tail -20 || true
+            echo "===== DEPLOYMENTS ====="
+            kubectl get deployments || true
+
+            echo "===== RECENT EVENTS ====="
+            kubectl get events \
+            --sort-by=.metadata.creationTimestamp | tail -20 || true
             '''
         }
 
