@@ -21,7 +21,7 @@ spec:
       containers:
         - name: house-price-api
 
-          image: house-price-api:v3
+          image: house-price-api:v4
 
           imagePullPolicy: Never
 

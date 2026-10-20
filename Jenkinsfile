@@ -31,7 +31,7 @@ pipeline {
                 echo 'Cloning repository...'
 
                 git(
-                    branch: 'main',
+                    branch: 'master',
                     url: 'https://github.com/BabuJoseph15/House-Price-Predictor-Mlops.git'
                 )
             }
