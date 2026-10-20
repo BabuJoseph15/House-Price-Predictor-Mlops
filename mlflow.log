@@ -1,24 +1,8 @@
 nohup: ignoring input
-[2026-10-12 10:21:04 +0000] [37498] [INFO] Starting gunicorn 23.0.0
-[2026-10-12 10:21:04 +0000] [37498] [INFO] Listening at: http://0.0.0.0:5000 (37498)
-[2026-10-12 10:21:04 +0000] [37498] [INFO] Using worker: sync
-[2026-10-12 10:21:04 +0000] [37499] [INFO] Booting worker with pid: 37499
-[2026-10-12 10:21:04 +0000] [37500] [INFO] Booting worker with pid: 37500
-[2026-10-12 10:21:04 +0000] [37501] [INFO] Booting worker with pid: 37501
-[2026-10-12 10:21:04 +0000] [37502] [INFO] Booting worker with pid: 37502
-[2026-10-12 13:13:07 +0000] [37498] [ERROR] Worker (pid:37501) was sent SIGHUP!
-[2026-10-12 13:13:07 +0000] [37498] [INFO] Handling signal: hup
-[2026-10-12 13:13:07 +0000] [37498] [INFO] Hang up: Master
-[2026-10-12 13:13:07 +0000] [37498] [ERROR] Worker (pid:37500) was sent SIGHUP!
-[2026-10-12 13:13:07 +0000] [37498] [ERROR] Worker (pid:37499) was sent SIGHUP!
-[2026-10-12 13:13:07 +0000] [37498] [ERROR] Worker (pid:37502) was sent SIGHUP!
-[2026-10-12 13:13:07 +0000] [55382] [INFO] Booting worker with pid: 55382
-[2026-10-12 13:13:07 +0000] [55383] [INFO] Booting worker with pid: 55383
-[2026-10-12 13:13:07 +0000] [55384] [INFO] Booting worker with pid: 55384
-[2026-10-12 13:13:07 +0000] [55385] [INFO] Booting worker with pid: 55385
-[2026-10-12 13:13:46 +0000] [37498] [INFO] Handling signal: term
-[2026-10-12 13:13:46 +0000] [37498] [ERROR] Worker (pid:55384) was sent SIGHUP!
-[2026-10-12 13:13:46 +0000] [37498] [ERROR] Worker (pid:55383) was sent SIGHUP!
-[2026-10-12 13:13:46 +0000] [37498] [ERROR] Worker (pid:55385) was sent SIGHUP!
-[2026-10-12 13:13:46 +0000] [37498] [ERROR] Worker (pid:55382) was sent SIGHUP!
-[2026-10-12 13:13:46 +0000] [37498] [INFO] Shutting down: Master
+[2026-10-20 08:40:59 +0000] [6304] [INFO] Starting gunicorn 23.0.0
+[2026-10-20 08:40:59 +0000] [6304] [INFO] Listening at: http://0.0.0.0:5000 (6304)
+[2026-10-20 08:40:59 +0000] [6304] [INFO] Using worker: sync
+[2026-10-20 08:40:59 +0000] [6305] [INFO] Booting worker with pid: 6305
+[2026-10-20 08:40:59 +0000] [6306] [INFO] Booting worker with pid: 6306
+[2026-10-20 08:40:59 +0000] [6307] [INFO] Booting worker with pid: 6307
+[2026-10-20 08:40:59 +0000] [6308] [INFO] Booting worker with pid: 6308
