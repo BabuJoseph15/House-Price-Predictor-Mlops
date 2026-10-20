@@ -1,0 +1,1151 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/restartedAt: "2026-10-20T10:03:06Z"
+    creationTimestamp: "2026-10-20T12:35:20Z"
+    generateName: house-price-api-5bb7f64dd-
+    generation: 1
+    labels:
+      app: house-price-api
+      pod-template-hash: 5bb7f64dd
+    name: house-price-api-5bb7f64dd-5kltt
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: house-price-api-5bb7f64dd
+      uid: bc3be25c-6ffa-46d4-9d9d-25afea543ead
+    resourceVersion: "49092"
+    uid: 4837bacf-0b95-40c0-a58c-34abf1cccd11
+  spec:
+    containers:
+    - image: babujoseph5757/house-price-api:19
+      imagePullPolicy: Always
+      name: house-price-api
+      ports:
+      - containerPort: 8000
+        protocol: TCP
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-fvnkz
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: minikube
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-fvnkz
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    allocatedResources:
+      cpu: 100m
+      memory: 128Mi
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-10-20T12:46:53Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-10-20T12:35:20Z"
+      observedGeneration: 1
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-10-20T12:46:55Z"
+      observedGeneration: 1
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-10-20T12:46:55Z"
+      observedGeneration: 1
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-10-20T12:35:20Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 100m
+        memory: 128Mi
+      containerID: containerd://e05be1f81b0035304ab9c0b5b727dbd34aa1030e676fada32c38cacef08d5e13
+      image: docker.io/babujoseph5757/house-price-api:19
+      imageID: docker.io/babujoseph5757/house-price-api@sha256:39b35db271a2ffa3f33848114699c7d8419b7a0ebbc2190cf758e931a602c744
+      lastState:
+        terminated:
+          containerID: containerd://862a9676e802948073bec520dde4c8c4ea7cc7da3c1f0c8d460c8e0892154036
+          exitCode: 255
+          finishedAt: "2026-10-20T12:46:43Z"
+          reason: Unknown
+          startedAt: "2026-10-20T12:35:22Z"
+      name: house-price-api
+      ready: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      restartCount: 1
+      started: true
+      state:
+        running:
+          startedAt: "2026-10-20T12:46:55Z"
+      user:
+        linux:
+          gid: 0
+          supplementalGroups:
+          - 0
+          uid: 0
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-fvnkz
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.49.2
+    hostIPs:
+    - ip: 192.168.49.2
+    observedGeneration: 1
+    phase: Running
+    podIP: 10.244.0.6
+    podIPs:
+    - ip: 10.244.0.6
+    qosClass: Burstable
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 79m
+        memory: 128Mi
+    startTime: "2026-10-20T12:35:20Z"
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/restartedAt: "2026-10-20T10:03:06Z"
+    creationTimestamp: "2026-10-20T12:34:48Z"
+    generateName: house-price-api-5bb7f64dd-
+    generation: 1
+    labels:
+      app: house-price-api
+      pod-template-hash: 5bb7f64dd
+    name: house-price-api-5bb7f64dd-cgwxt
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicaSet
+      name: house-price-api-5bb7f64dd
+      uid: bc3be25c-6ffa-46d4-9d9d-25afea543ead
+    resourceVersion: "49124"
+    uid: 279a8b5d-ad96-4089-a56d-af1382e1d154
+  spec:
+    containers:
+    - image: babujoseph5757/house-price-api:19
+      imagePullPolicy: Always
+      name: house-price-api
+      ports:
+      - containerPort: 8000
+        protocol: TCP
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-x27fb
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    enableServiceLinks: true
+    nodeName: minikube
+    preemptionPolicy: PreemptLowerPriority
+    priority: 0
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 300
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 300
+    volumes:
+    - name: kube-api-access-x27fb
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
+  status:
+    allocatedResources:
+      cpu: 100m
+      memory: 128Mi
+    conditions:
+    - lastProbeTime: null
+      lastTransitionTime: "2026-10-20T12:46:53Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodReadyToStartContainers
+    - lastProbeTime: null
+      lastTransitionTime: "2026-10-20T12:34:48Z"
+      observedGeneration: 1
+      status: "True"
+      type: Initialized
+    - lastProbeTime: null
+      lastTransitionTime: "2026-10-20T12:46:56Z"
+      observedGeneration: 1
+      status: "True"
+      type: Ready
+    - lastProbeTime: null
+      lastTransitionTime: "2026-10-20T12:46:56Z"
+      observedGeneration: 1
+      status: "True"
+      type: ContainersReady
+    - lastProbeTime: null
+      lastTransitionTime: "2026-10-20T12:34:48Z"
+      observedGeneration: 1
+      status: "True"
+      type: PodScheduled
+    containerStatuses:
+    - allocatedResources:
+        cpu: 100m
+        memory: 128Mi
+      containerID: containerd://7619d63851e1aa8d0e87d14f705dab3b2b98e8d5aa025856fee1ae38c9e624d4
+      image: docker.io/babujoseph5757/house-price-api:19
+      imageID: docker.io/babujoseph5757/house-price-api@sha256:39b35db271a2ffa3f33848114699c7d8419b7a0ebbc2190cf758e931a602c744
+      lastState:
+        terminated:
+          containerID: containerd://65fd4587e505cf5858361c3d287538b80d03faeeea3a8f2106dd85f7a3fc1ece
+          exitCode: 255
+          finishedAt: "2026-10-20T12:46:43Z"
+          reason: Unknown
+          startedAt: "2026-10-20T12:35:20Z"
+      name: house-price-api
+      ready: true
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      restartCount: 1
+      started: true
+      state:
+        running:
+          startedAt: "2026-10-20T12:46:56Z"
+      user:
+        linux:
+          gid: 0
+          supplementalGroups:
+          - 0
+          uid: 0
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-x27fb
+        readOnly: true
+        recursiveReadOnly: Disabled
+    hostIP: 192.168.49.2
+    hostIPs:
+    - ip: 192.168.49.2
+    observedGeneration: 1
+    phase: Running
+    podIP: 10.244.0.10
+    podIPs:
+    - ip: 10.244.0.10
+    qosClass: Burstable
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 79m
+        memory: 128Mi
+    startTime: "2026-10-20T12:34:48Z"
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{"prometheus.io/path":"/metrics","prometheus.io/port":"8000","prometheus.io/scrape":"true"},"name":"house-price-service","namespace":"default"},"spec":{"ports":[{"nodePort":30080,"port":8000,"protocol":"TCP","targetPort":8000}],"selector":{"app":"house-price-api"},"type":"NodePort"}}
+      prometheus.io/path: /metrics
+      prometheus.io/port: "8000"
+      prometheus.io/scrape: "true"
+    creationTimestamp: "2026-10-12T09:18:05Z"
+    name: house-price-service
+    namespace: default
+    resourceVersion: "26869"
+    uid: 92319b86-24dd-4895-8acf-00422b913188
+  spec:
+    clusterIP: 10.101.46.84
+    clusterIPs:
+    - 10.101.46.84
+    externalTrafficPolicy: Cluster
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - nodePort: 30080
+      port: 8000
+      protocol: TCP
+      targetPort: 8000
+    selector:
+      app: house-price-api
+    sessionAffinity: None
+    type: NodePort
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2026-10-12T08:28:12Z"
+    labels:
+      component: apiserver
+      provider: kubernetes
+    name: kubernetes
+    namespace: default
+    resourceVersion: "250"
+    uid: a192f71d-89eb-4129-9013-8596c97703a2
+  spec:
+    clusterIP: 10.96.0.1
+    clusterIPs:
+    - 10.96.0.1
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 8443
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    annotations:
+      deployment.kubernetes.io/revision: "18"
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"labels":{"app":"house-price-api"},"name":"house-price-api","namespace":"default"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"house-price-api"}},"template":{"metadata":{"labels":{"app":"house-price-api"}},"spec":{"containers":[{"image":"house-price-api:14","imagePullPolicy":"Always","name":"house-price-api","ports":[{"containerPort":8000}],"resources":{"limits":{"cpu":"500m","memory":"512Mi"},"requests":{"cpu":"100m","memory":"128Mi"}}}]}}}}
+    creationTimestamp: "2026-10-12T09:16:21Z"
+    generation: 21
+    labels:
+      app: house-price-api
+    name: house-price-api
+    namespace: default
+    resourceVersion: "48677"
+    uid: 5e6a6dc7-88bd-4dbc-9ec3-445940606ab7
+  spec:
+    progressDeadlineSeconds: 600
+    replicas: 2
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: house-price-api
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 25%
+      type: RollingUpdate
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-10-20T10:03:06Z"
+        labels:
+          app: house-price-api
+      spec:
+        containers:
+        - image: babujoseph5757/house-price-api:19
+          imagePullPolicy: Always
+          name: house-price-api
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 2
+    conditions:
+    - lastTransitionTime: "2026-10-18T20:18:13Z"
+      lastUpdateTime: "2026-10-18T20:18:13Z"
+      message: Deployment has minimum availability.
+      reason: MinimumReplicasAvailable
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2026-10-20T10:02:57Z"
+      lastUpdateTime: "2026-10-20T12:35:22Z"
+      message: ReplicaSet "house-price-api-5bb7f64dd" has successfully progressed.
+      reason: NewReplicaSetAvailable
+      status: "True"
+      type: Progressing
+    observedGeneration: 21
+    readyReplicas: 2
+    replicas: 2
+    terminatingReplicas: 0
+    updatedReplicas: 2
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "2"
+      deployment.kubernetes.io/max-replicas: "3"
+      deployment.kubernetes.io/revision: "12"
+    creationTimestamp: "2026-10-20T09:43:31Z"
+    generation: 3
+    labels:
+      app: house-price-api
+      pod-template-hash: 55fb9cf5d7
+    name: house-price-api-55fb9cf5d7
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: house-price-api
+      uid: 5e6a6dc7-88bd-4dbc-9ec3-445940606ab7
+    resourceVersion: "42516"
+    uid: 689b72a6-2230-4901-b18d-b0261e832332
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: house-price-api
+        pod-template-hash: 55fb9cf5d7
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-10-20T09:43:31Z"
+        labels:
+          app: house-price-api
+          pod-template-hash: 55fb9cf5d7
+      spec:
+        containers:
+        - image: house-price-api:v4
+          imagePullPolicy: Never
+          name: house-price-api
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 3
+    replicas: 0
+    terminatingReplicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "2"
+      deployment.kubernetes.io/max-replicas: "3"
+      deployment.kubernetes.io/revision: "15"
+    creationTimestamp: "2026-10-20T10:03:06Z"
+    generation: 3
+    labels:
+      app: house-price-api
+      pod-template-hash: 584cc4f955
+    name: house-price-api-584cc4f955
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: house-price-api
+      uid: 5e6a6dc7-88bd-4dbc-9ec3-445940606ab7
+    resourceVersion: "43812"
+    uid: bdccfc7a-b93f-475a-b7de-549520d42812
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: house-price-api
+        pod-template-hash: 584cc4f955
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-10-20T10:03:06Z"
+        labels:
+          app: house-price-api
+          pod-template-hash: 584cc4f955
+      spec:
+        containers:
+        - image: house-price-api:14
+          imagePullPolicy: Always
+          name: house-price-api
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 3
+    replicas: 0
+    terminatingReplicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "2"
+      deployment.kubernetes.io/max-replicas: "3"
+      deployment.kubernetes.io/revision: "18"
+    creationTimestamp: "2026-10-20T12:34:48Z"
+    generation: 2
+    labels:
+      app: house-price-api
+      pod-template-hash: 5bb7f64dd
+    name: house-price-api-5bb7f64dd
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: house-price-api
+      uid: 5e6a6dc7-88bd-4dbc-9ec3-445940606ab7
+    resourceVersion: "48623"
+    uid: bc3be25c-6ffa-46d4-9d9d-25afea543ead
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        app: house-price-api
+        pod-template-hash: 5bb7f64dd
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-10-20T10:03:06Z"
+        labels:
+          app: house-price-api
+          pod-template-hash: 5bb7f64dd
+      spec:
+        containers:
+        - image: babujoseph5757/house-price-api:19
+          imagePullPolicy: Always
+          name: house-price-api
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    availableReplicas: 2
+    fullyLabeledReplicas: 2
+    observedGeneration: 2
+    readyReplicas: 2
+    replicas: 2
+    terminatingReplicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "2"
+      deployment.kubernetes.io/max-replicas: "3"
+      deployment.kubernetes.io/revision: "10"
+    creationTimestamp: "2026-10-16T19:31:13Z"
+    generation: 6
+    labels:
+      app: house-price-api
+      pod-template-hash: 6664bd5ddb
+    name: house-price-api-6664bd5ddb
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: house-price-api
+      uid: 5e6a6dc7-88bd-4dbc-9ec3-445940606ab7
+    resourceVersion: "43911"
+    uid: f8adfb00-acbd-4a9a-8c27-6b4f31657e2d
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: house-price-api
+        pod-template-hash: 6664bd5ddb
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-10-16T18:44:57Z"
+        labels:
+          app: house-price-api
+          pod-template-hash: 6664bd5ddb
+      spec:
+        containers:
+        - image: house-price-api:v3
+          imagePullPolicy: Never
+          name: house-price-api
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 6
+    replicas: 0
+    terminatingReplicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "2"
+      deployment.kubernetes.io/max-replicas: "3"
+      deployment.kubernetes.io/revision: "16"
+    creationTimestamp: "2026-10-20T10:11:54Z"
+    generation: 5
+    labels:
+      app: house-price-api
+      pod-template-hash: 676cd567dd
+    name: house-price-api-676cd567dd
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: house-price-api
+      uid: 5e6a6dc7-88bd-4dbc-9ec3-445940606ab7
+    resourceVersion: "44992"
+    uid: de43fc89-f0d6-47ec-bf5a-85988b6bc035
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: house-price-api
+        pod-template-hash: 676cd567dd
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-10-20T10:03:06Z"
+        labels:
+          app: house-price-api
+          pod-template-hash: 676cd567dd
+      spec:
+        containers:
+        - image: babujoseph5757/house-price-api:15
+          imagePullPolicy: Always
+          name: house-price-api
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 5
+    replicas: 0
+    terminatingReplicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "2"
+      deployment.kubernetes.io/max-replicas: "3"
+      deployment.kubernetes.io/revision: "17"
+    creationTimestamp: "2026-10-20T10:30:25Z"
+    generation: 4
+    labels:
+      app: house-price-api
+      pod-template-hash: 68594cf6c7
+    name: house-price-api-68594cf6c7
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: house-price-api
+      uid: 5e6a6dc7-88bd-4dbc-9ec3-445940606ab7
+    resourceVersion: "48676"
+    uid: b0ce0a37-0009-4445-b656-566af4300599
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: house-price-api
+        pod-template-hash: 68594cf6c7
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-10-20T10:03:06Z"
+        labels:
+          app: house-price-api
+          pod-template-hash: 68594cf6c7
+      spec:
+        containers:
+        - image: babujoseph5757/house-price-api:16
+          imagePullPolicy: Always
+          name: house-price-api
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 4
+    replicas: 0
+    terminatingReplicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "2"
+      deployment.kubernetes.io/max-replicas: "3"
+      deployment.kubernetes.io/revision: "13"
+    creationTimestamp: "2026-10-20T09:51:41Z"
+    generation: 3
+    labels:
+      app: house-price-api
+      pod-template-hash: 686bd458b
+    name: house-price-api-686bd458b
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: house-price-api
+      uid: 5e6a6dc7-88bd-4dbc-9ec3-445940606ab7
+    resourceVersion: "43182"
+    uid: 57e3b9f8-eb0c-474e-a988-b91993b7a6f3
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: house-price-api
+        pod-template-hash: 686bd458b
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-10-20T09:43:31Z"
+        labels:
+          app: house-price-api
+          pod-template-hash: 686bd458b
+      spec:
+        containers:
+        - image: babujoseph5757/house-price-api:14
+          imagePullPolicy: Never
+          name: house-price-api
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 3
+    replicas: 0
+    terminatingReplicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "2"
+      deployment.kubernetes.io/max-replicas: "3"
+      deployment.kubernetes.io/revision: "8"
+    creationTimestamp: "2026-10-16T18:44:45Z"
+    generation: 4
+    labels:
+      app: house-price-api
+      pod-template-hash: 76859cfc
+    name: house-price-api-76859cfc
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: house-price-api
+      uid: 5e6a6dc7-88bd-4dbc-9ec3-445940606ab7
+    resourceVersion: "24232"
+    uid: 32d9fc20-1ea9-46bc-939e-e5037e3e4305
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: house-price-api
+        pod-template-hash: 76859cfc
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-10-12T12:17:09Z"
+        labels:
+          app: house-price-api
+          pod-template-hash: 76859cfc
+      spec:
+        containers:
+        - image: house-price-api:v3
+          imagePullPolicy: Never
+          name: house-price-api
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 4
+    replicas: 0
+    terminatingReplicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "2"
+      deployment.kubernetes.io/max-replicas: "3"
+      deployment.kubernetes.io/revision: "9"
+    creationTimestamp: "2026-10-16T18:44:57Z"
+    generation: 6
+    labels:
+      app: house-price-api
+      pod-template-hash: 85fcdbf78d
+    name: house-price-api-85fcdbf78d
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: house-price-api
+      uid: 5e6a6dc7-88bd-4dbc-9ec3-445940606ab7
+    resourceVersion: "26894"
+    uid: 4b035a97-2860-4401-8a50-4e9f99446953
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: house-price-api
+        pod-template-hash: 85fcdbf78d
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-10-16T18:44:57Z"
+        labels:
+          app: house-price-api
+          pod-template-hash: 85fcdbf78d
+      spec:
+        containers:
+        - image: house-price-api:v3
+          imagePullPolicy: Never
+          name: house-price-api
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 6
+    replicas: 0
+    terminatingReplicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "2"
+      deployment.kubernetes.io/max-replicas: "3"
+      deployment.kubernetes.io/revision: "11"
+    creationTimestamp: "2026-10-20T09:36:05Z"
+    generation: 2
+    labels:
+      app: house-price-api
+      pod-template-hash: bf8c88b65
+    name: house-price-api-bf8c88b65
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: house-price-api
+      uid: 5e6a6dc7-88bd-4dbc-9ec3-445940606ab7
+    resourceVersion: "42015"
+    uid: 924cfc41-120f-4854-937e-adf4dd7df324
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: house-price-api
+        pod-template-hash: bf8c88b65
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-10-16T18:44:57Z"
+        labels:
+          app: house-price-api
+          pod-template-hash: bf8c88b65
+      spec:
+        containers:
+        - image: house-price-api:v4
+          imagePullPolicy: Never
+          name: house-price-api
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 2
+    replicas: 0
+    terminatingReplicas: 0
+- apiVersion: apps/v1
+  kind: ReplicaSet
+  metadata:
+    annotations:
+      deployment.kubernetes.io/desired-replicas: "2"
+      deployment.kubernetes.io/max-replicas: "3"
+      deployment.kubernetes.io/revision: "14"
+    creationTimestamp: "2026-10-20T10:02:57Z"
+    generation: 3
+    labels:
+      app: house-price-api
+      pod-template-hash: c756cd987
+    name: house-price-api-c756cd987
+    namespace: default
+    ownerReferences:
+    - apiVersion: apps/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: Deployment
+      name: house-price-api
+      uid: 5e6a6dc7-88bd-4dbc-9ec3-445940606ab7
+    resourceVersion: "43233"
+    uid: b1c90a5a-fc63-4dd0-92ed-5cf13f4a6d1e
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: house-price-api
+        pod-template-hash: c756cd987
+    template:
+      metadata:
+        annotations:
+          kubectl.kubernetes.io/restartedAt: "2026-10-20T09:43:31Z"
+        labels:
+          app: house-price-api
+          pod-template-hash: c756cd987
+      spec:
+        containers:
+        - image: house-price-api:14
+          imagePullPolicy: Always
+          name: house-price-api
+          ports:
+          - containerPort: 8000
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    observedGeneration: 3
+    replicas: 0
+    terminatingReplicas: 0
+kind: List
+metadata:
+  resourceVersion: ""

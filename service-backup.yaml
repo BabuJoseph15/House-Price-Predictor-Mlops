@@ -1,0 +1,67 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{"prometheus.io/path":"/metrics","prometheus.io/port":"8000","prometheus.io/scrape":"true"},"name":"house-price-service","namespace":"default"},"spec":{"ports":[{"nodePort":30080,"port":8000,"protocol":"TCP","targetPort":8000}],"selector":{"app":"house-price-api"},"type":"NodePort"}}
+      prometheus.io/path: /metrics
+      prometheus.io/port: "8000"
+      prometheus.io/scrape: "true"
+    creationTimestamp: "2026-10-12T09:18:05Z"
+    name: house-price-service
+    namespace: default
+    resourceVersion: "26869"
+    uid: 92319b86-24dd-4895-8acf-00422b913188
+  spec:
+    clusterIP: 10.101.46.84
+    clusterIPs:
+    - 10.101.46.84
+    externalTrafficPolicy: Cluster
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - nodePort: 30080
+      port: 8000
+      protocol: TCP
+      targetPort: 8000
+    selector:
+      app: house-price-api
+    sessionAffinity: None
+    type: NodePort
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: "2026-10-12T08:28:12Z"
+    labels:
+      component: apiserver
+      provider: kubernetes
+    name: kubernetes
+    namespace: default
+    resourceVersion: "250"
+    uid: a192f71d-89eb-4129-9013-8596c97703a2
+  spec:
+    clusterIP: 10.96.0.1
+    clusterIPs:
+    - 10.96.0.1
+    internalTrafficPolicy: Cluster
+    ipFamilies:
+    - IPv4
+    ipFamilyPolicy: SingleStack
+    ports:
+    - name: https
+      port: 443
+      protocol: TCP
+      targetPort: 8443
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+kind: List
+metadata:
+  resourceVersion: ""
