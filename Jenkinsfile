@@ -4,7 +4,6 @@ pipeline {
     environment {
         DOCKER_IMAGE = "babujoseph5757/house-price-api"
         KUBECONFIG = "/var/lib/jenkins/.kube/config"
-        VENV = "${WORKSPACE}/venv"
     }
 
     options {
@@ -24,13 +23,12 @@ pipeline {
         stage('Verify Files') {
             steps {
                 sh '''
-                echo "===== PROJECT FILES ====="
                 pwd
                 ls -la
 
-                test -f Dockerfile || (echo "Dockerfile not found"; exit 1)
-                test -f requirements.txt || (echo "requirements.txt not found"; exit 1)
-                test -f app.py || (echo "app.py not found"; exit 1)
+                test -f Dockerfile
+                test -f requirements.txt
+                test -f app.py
                 '''
             }
         }
@@ -66,7 +64,6 @@ pipeline {
                 sh '''
                 . venv/bin/activate
 
-                echo "===== DEPENDENCY CHECK ====="
                 pip check
                 '''
             }
@@ -79,8 +76,29 @@ pipeline {
 
                 export PYTHONPATH=$WORKSPACE
 
-                echo "===== RUNNING TESTS ====="
                 pytest tests/ -v
+                '''
+            }
+        }
+
+        stage('Disk Usage Check') {
+            steps {
+                sh '''
+                echo "===== DISK USAGE ====="
+                df -h
+
+                echo "===== DOCKER USAGE ====="
+                docker system df || true
+                '''
+            }
+        }
+
+        stage('Docker Cleanup') {
+            steps {
+                sh '''
+                docker image prune -a -f || true
+                docker builder prune -a -f || true
+                docker volume prune -f || true
                 '''
             }
         }
@@ -88,8 +106,12 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .
-                docker tag ${DOCKER_IMAGE}:${BUILD_NUMBER} ${DOCKER_IMAGE}:latest
+                docker build --no-cache \
+                -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .
+
+                docker tag \
+                ${DOCKER_IMAGE}:${BUILD_NUMBER} \
+                ${DOCKER_IMAGE}:latest
                 '''
             }
         }
@@ -115,7 +137,8 @@ pipeline {
                 ]) {
                     sh '''
                     echo "$DOCKER_PASS" | docker login \
-                    -u "$DOCKER_USER" --password-stdin
+                    -u "$DOCKER_USER" \
+                    --password-stdin
 
                     docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}
                     docker push ${DOCKER_IMAGE}:latest
@@ -134,7 +157,8 @@ pipeline {
                 kubectl set image deployment/house-price-api \
                 house-price-api=${DOCKER_IMAGE}:${BUILD_NUMBER}
 
-                kubectl rollout status deployment/house-price-api --timeout=300s
+                kubectl rollout status deployment/house-price-api \
+                --timeout=300s
                 '''
             }
         }
@@ -144,13 +168,8 @@ pipeline {
                 sh '''
                 export KUBECONFIG=${KUBECONFIG}
 
-                echo "===== DEPLOYMENTS ====="
                 kubectl get deployments
-
-                echo "===== PODS ====="
                 kubectl get pods -o wide
-
-                echo "===== SERVICES ====="
                 kubectl get svc
                 '''
             }
@@ -167,15 +186,15 @@ pipeline {
             echo '❌ Pipeline failed. Collecting diagnostics...'
 
             sh '''
+            df -h || true
+
+            docker system df || true
+
             export KUBECONFIG=${KUBECONFIG}
 
-            echo "===== PODS ====="
             kubectl get pods || true
-
-            echo "===== DEPLOYMENTS ====="
             kubectl get deployments || true
 
-            echo "===== RECENT EVENTS ====="
             kubectl get events \
             --sort-by=.metadata.creationTimestamp | tail -20 || true
             '''
@@ -183,7 +202,9 @@ pipeline {
 
         always {
             sh '''
-            docker image prune -f || true
+            docker image prune -a -f || true
+            docker builder prune -a -f || true
+            docker volume prune -f || true
             '''
             cleanWs()
         }
