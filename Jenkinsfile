@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "babujoseph5757/house-price-api"
         KUBECONFIG = "/var/lib/jenkins/.kube/config"
+        VENV = "${WORKSPACE}/venv"
     }
 
     options {
@@ -29,6 +30,22 @@ pipeline {
 
                 test -f Dockerfile || (echo "Dockerfile not found"; exit 1)
                 test -f requirements.txt || (echo "requirements.txt not found"; exit 1)
+                test -f app.py || (echo "app.py not found"; exit 1)
+                '''
+            }
+        }
+
+        stage('Create Python Environment') {
+            steps {
+                sh '''
+                python3 -m venv venv
+
+                . venv/bin/activate
+
+                python --version
+                pip --version
+
+                pip install --upgrade pip
                 '''
             }
         }
@@ -36,13 +53,10 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh '''
-                python3 -m pip install --upgrade pip
+                . venv/bin/activate
 
-                if [ -f requirements.txt ]; then
-                    pip3 install -r requirements.txt
-                fi
-
-                pip3 install pytest httpx
+                pip install -r requirements.txt
+                pip install pytest httpx
                 '''
             }
         }
@@ -50,6 +64,9 @@ pipeline {
         stage('Validate Dependencies') {
             steps {
                 sh '''
+                . venv/bin/activate
+
+                echo "===== DEPENDENCY CHECK ====="
                 pip check
                 '''
             }
@@ -58,14 +75,12 @@ pipeline {
         stage('Run Unit Tests') {
             steps {
                 sh '''
+                . venv/bin/activate
+
                 export PYTHONPATH=$WORKSPACE
 
-                if [ -d "tests" ]; then
-                    echo "Running Unit Tests..."
-                    pytest tests/ -v
-                else
-                    echo "No tests directory found. Skipping..."
-                fi
+                echo "===== RUNNING TESTS ====="
+                pytest tests/ -v
                 '''
             }
         }
@@ -83,8 +98,8 @@ pipeline {
             steps {
                 sh '''
                 trivy image \
-                  --severity HIGH,CRITICAL \
-                  ${DOCKER_IMAGE}:${BUILD_NUMBER} || true
+                --severity HIGH,CRITICAL \
+                ${DOCKER_IMAGE}:${BUILD_NUMBER} || true
                 '''
             }
         }
@@ -168,7 +183,7 @@ pipeline {
 
         always {
             sh '''
-            docker image prune -f
+            docker image prune -f || true
             '''
             cleanWs()
         }
