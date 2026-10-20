@@ -1,126 +1,40 @@
-from flask import Flask, request, jsonify, Response
+import os
+import joblib
+import boto3
 import pandas as pd
-import time
 
-from prometheus_client import (
-    Counter,
-    Histogram,
-    generate_latest,
-    CONTENT_TYPE_LATEST
-)
-
-from src.pipeline.prediction_pipeline import PredictionPipeline
+from flask import Flask, request, jsonify
+from prometheus_client import Counter, generate_latest
 
 app = Flask(__name__)
 
 # ==========================
+# S3 Configuration
+# ==========================
+BUCKET_NAME = "house-price-mlops-models-babuguduru"
+
+MODEL_PATH = "artifacts/model.pkl"
+PREPROCESSOR_PATH = "artifacts/preprocessor.pkl"
+
+# ==========================
 # Prometheus Metrics
 # ==========================
-
-PREDICTION_REQUESTS = Counter(
+prediction_counter = Counter(
     "prediction_requests_total",
-    "Total number of prediction requests"
+    "Total prediction requests"
 )
 
-PREDICTION_ERRORS = Counter(
-    "prediction_errors_total",
-    "Total number of prediction errors"
-)
-
-PREDICTION_LATENCY = Histogram(
-    "prediction_latency_seconds",
-    "Prediction request latency in seconds"
-)
-
-
 # ==========================
-# Home Endpoint
+# Download Artifacts from S3
 # ==========================
+def download_artifacts():
+    os.makedirs("artifacts", exist_ok=True)
 
-@app.route("/")
-def home():
+    s3 = boto3.client("s3")
 
-    return jsonify({
-        "message": "House Price Prediction API is running"
-    })
-
-
-# ==========================
-# Health Endpoint
-# ==========================
-
-@app.route("/health")
-def health():
-
-    return jsonify({
-        "status": "healthy"
-    })
-
-
-# ==========================
-# Metrics Endpoint
-# ==========================
-
-@app.route("/metrics")
-def metrics():
-
-    return Response(
-        generate_latest(),
-        mimetype=CONTENT_TYPE_LATEST
-    )
-
-
-# ==========================
-# Prediction Endpoint
-# ==========================
-
-@app.route("/predict", methods=["POST"])
-def predict():
-
-    start_time = time.time()
-
-    PREDICTION_REQUESTS.inc()
-
-    try:
-
-        data = request.get_json()
-
-        input_df = pd.DataFrame([data])
-
-        predictor = PredictionPipeline()
-
-        prediction = predictor.predict(input_df)
-
-        response_time = time.time() - start_time
-
-        PREDICTION_LATENCY.observe(
-            response_time
-        )
-
-        return jsonify({
-            "predicted_house_price": round(
-                float(prediction[0]),
-                2
-            )
-        })
-
-    except Exception as e:
-
-        PREDICTION_ERRORS.inc()
-
-        return jsonify({
-            "error": str(e)
-        }), 500
-
-
-# ==========================
-# Main
-# ==========================
-
-if __name__ == "__main__":
-
-    app.run(
-        host="0.0.0.0",
-        port=8000,
-        debug=False
-    )
+    if not os.path.exists(MODEL_PATH):
+        print("Downloading model.pkl from S3...")
+        s3.download_file(
+            BUCKET_NAME,
+            "models/model.pkl",
+            MODEL_PATH
