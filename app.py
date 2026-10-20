@@ -17,6 +17,9 @@ BUCKET_NAME = "house-price-mlops-models-babuguduru"
 MODEL_PATH = "artifacts/model.pkl"
 PREPROCESSOR_PATH = "artifacts/preprocessor.pkl"
 
+model = None
+preprocessor = None
+
 # ==================================================
 # Prometheus Metrics
 # ==================================================
@@ -27,7 +30,7 @@ prediction_counter = Counter(
 )
 
 # ==================================================
-# Download Artifacts From S3
+# Download Artifacts from S3
 # ==================================================
 
 def download_artifacts():
@@ -51,20 +54,21 @@ def download_artifacts():
             PREPROCESSOR_PATH
         )
 
-
 # ==================================================
-# Startup
+# Lazy Model Loading
 # ==================================================
 
-download_artifacts()
+def initialize_model():
+    global model
+    global preprocessor
 
-print("Loading model...")
-model = joblib.load(MODEL_PATH)
+    if model is None or preprocessor is None:
+        download_artifacts()
 
-print("Loading preprocessor...")
-preprocessor = joblib.load(PREPROCESSOR_PATH)
+        model = joblib.load(MODEL_PATH)
+        preprocessor = joblib.load(PREPROCESSOR_PATH)
 
-print("Application started successfully")
+        print("Model loaded successfully")
 
 # ==================================================
 # Routes
@@ -76,13 +80,11 @@ def home():
         "message": "House Price Prediction API is running"
     })
 
-
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({
         "status": "healthy"
     })
-
 
 @app.route("/metrics", methods=["GET"])
 def metrics():
@@ -90,10 +92,11 @@ def metrics():
         "Content-Type": "text/plain"
     }
 
-
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
+        initialize_model()
+
         prediction_counter.inc()
 
         json_data = request.get_json()
@@ -136,11 +139,6 @@ def predict():
         return jsonify({
             "error": str(e)
         }), 500
-
-
-# ==================================================
-# Main
-# ==================================================
 
 if __name__ == "__main__":
     app.run(

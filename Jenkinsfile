@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "babujoseph5757/house-price-api"
         KUBECONFIG = "/var/lib/jenkins/.kube/config"
+        AWS_DEFAULT_REGION = "ap-south-1"
     }
 
     options {
@@ -54,7 +55,7 @@ pipeline {
                 . venv/bin/activate
 
                 pip install -r requirements.txt
-                pip install pytest httpx
+                pip install pytest
                 '''
             }
         }
@@ -81,24 +82,33 @@ pipeline {
             }
         }
 
-        stage('Disk Usage Check') {
+        stage('Verify S3 Access') {
             steps {
-                sh '''
-                echo "===== DISK USAGE ====="
-                df -h
+                withCredentials([
+                    string(
+                        credentialsId: 'aws-access-key-id',
+                        variable: 'AWS_ACCESS_KEY_ID'
+                    ),
+                    string(
+                        credentialsId: 'aws-secret-access-key',
+                        variable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
 
-                echo "===== DOCKER USAGE ====="
-                docker system df || true
-                '''
+                    sh '''
+                    aws s3 ls \
+                    s3://house-price-mlops-models-babuguduru/models/
+                    '''
+                }
             }
         }
 
-        stage('Docker Cleanup') {
+        stage('Disk Usage Check') {
             steps {
                 sh '''
-                docker image prune -a -f || true
-                docker builder prune -a -f || true
-                docker volume prune -f || true
+                df -h
+
+                docker system df || true
                 '''
             }
         }
@@ -106,7 +116,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                docker build --no-cache \
+                docker build \
                 -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .
 
                 docker tag \
@@ -135,12 +145,14 @@ pipeline {
                         passwordVariable: 'DOCKER_PASS'
                     )
                 ]) {
+
                     sh '''
                     echo "$DOCKER_PASS" | docker login \
                     -u "$DOCKER_USER" \
                     --password-stdin
 
                     docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}
+
                     docker push ${DOCKER_IMAGE}:latest
 
                     docker logout
@@ -169,7 +181,9 @@ pipeline {
                 export KUBECONFIG=${KUBECONFIG}
 
                 kubectl get deployments
+
                 kubectl get pods -o wide
+
                 kubectl get svc
                 '''
             }
@@ -202,9 +216,8 @@ pipeline {
 
         always {
             sh '''
-            docker image prune -a -f || true
-            docker builder prune -a -f || true
-            docker volume prune -f || true
+            docker image prune -f || true
+            docker builder prune -f || true
             '''
             cleanWs()
         }
