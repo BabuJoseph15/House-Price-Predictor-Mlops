@@ -1,74 +1,61 @@
 pipeline {
-
     agent any
 
     environment {
-
         DOCKER_IMAGE = "babujoseph5757/house-price-api"
-
-        IMAGE_TAG = "${BUILD_NUMBER}"
-
-        KUBECONFIG = "/var/lib/jenkins/.kube/config"
+        KUBE_CONFIG = "/var/lib/jenkins/.kube/config"
     }
 
     options {
-
         timestamps()
-
-        buildDiscarder(
-            logRotator(
-                numToKeepStr: '10'
-            )
-        )
     }
 
     stages {
 
-        stage('Checkout Source Code') {
-
+        stage('Checkout Code') {
             steps {
-
-                echo 'Cloning repository...'
-
-                git(
-                    branch: 'master',
+                git branch: 'master',
                     url: 'https://github.com/BabuJoseph15/House-Price-Predictor-Mlops.git'
-                )
             }
         }
 
         stage('Verify Files') {
-
             steps {
-
                 sh '''
+                echo "Current Directory:"
                 pwd
-                ls -ltr
-                '''
-            }
-        }
 
-        stage('Install Dependencies') {
+                echo "Files:"
+                ls -la
 
-            steps {
-
-                sh '''
-                python3 --version
-
-                if [ -f requirements.txt ]; then
-                    pip3 install -r requirements.txt
+                if [ ! -f requirements.txt ]; then
+                    echo "requirements.txt not found!"
+                    exit 1
                 fi
                 '''
             }
         }
 
-        stage('Run Unit Tests') {
-
+        stage('Install Dependencies') {
             steps {
-
                 sh '''
-                if [ -d tests ]; then
-                    pytest tests/
+                python3 -m pip install --upgrade pip
+
+                if [ -f requirements.txt ]; then
+                    pip3 install -r requirements.txt
+                fi
+
+                pip3 install pytest httpx
+                '''
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                sh '''
+                if [ -d "tests" ]; then
+                    echo "Running Unit Tests..."
+                    python3 -m pytest tests/ -v
                 else
                     echo "No tests directory found. Skipping..."
                 fi
@@ -77,34 +64,25 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-
             steps {
-
                 sh '''
-                docker build \
-                -t $DOCKER_IMAGE:$IMAGE_TAG \
-                .
+                docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .
+                docker tag ${DOCKER_IMAGE}:${BUILD_NUMBER} ${DOCKER_IMAGE}:latest
                 '''
             }
         }
 
-        stage('Security Scan - Trivy') {
-
+        stage('Security Scan') {
             steps {
-
                 sh '''
-                trivy image \
-                --severity HIGH,CRITICAL \
-                --exit-code 0 \
-                $DOCKER_IMAGE:$IMAGE_TAG
+                trivy image --severity HIGH,CRITICAL \
+                ${DOCKER_IMAGE}:${BUILD_NUMBER} || true
                 '''
             }
         }
 
-        stage('Docker Login') {
-
+        stage('Push Docker Image') {
             steps {
-
                 withCredentials([
                     usernamePassword(
                         credentialsId: 'dockerhub',
@@ -112,84 +90,57 @@ pipeline {
                         passwordVariable: 'DOCKER_PASS'
                     )
                 ]) {
-
                     sh '''
-                    echo "$DOCKER_PASS" | \
-                    docker login \
-                    -u "$DOCKER_USER" \
-                    --password-stdin
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+
+                    docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}
+                    docker push ${DOCKER_IMAGE}:latest
+
+                    docker logout
                     '''
                 }
             }
         }
 
-        stage('Push Docker Image') {
-
+        stage('Deploy to Kubernetes') {
             steps {
-
                 sh '''
-                docker push $DOCKER_IMAGE:$IMAGE_TAG
+                export KUBECONFIG=${KUBE_CONFIG}
 
-                docker tag \
-                $DOCKER_IMAGE:$IMAGE_TAG \
-                $DOCKER_IMAGE:latest
-
-                docker push \
-                $DOCKER_IMAGE:latest
-                '''
-            }
-        }
-
-        stage('Deploy To Kubernetes') {
-
-            steps {
-
-                sh '''
                 kubectl set image deployment/house-price-api \
-                house-price-api=$DOCKER_IMAGE:$IMAGE_TAG
+                house-price-api=${DOCKER_IMAGE}:${BUILD_NUMBER}
 
-                kubectl rollout status deployment/house-price-api \
-                --timeout=300s
+                kubectl rollout status deployment/house-price-api --timeout=300s
                 '''
             }
         }
 
         stage('Verify Deployment') {
-
             steps {
-
                 sh '''
-                echo "Current Pods"
+                export KUBECONFIG=${KUBE_CONFIG}
 
                 kubectl get pods
-
-                echo "Current Services"
-
                 kubectl get svc
                 '''
             }
         }
-
     }
 
     post {
 
         success {
-
             echo '✅ CI/CD Pipeline completed successfully!'
         }
 
         failure {
-
             echo '❌ Pipeline failed. Please check Jenkins console logs.'
         }
 
         always {
-
             sh '''
             docker image prune -f
             '''
-
             cleanWs()
         }
     }
