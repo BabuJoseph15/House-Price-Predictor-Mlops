@@ -21,12 +21,28 @@ spec:
       containers:
         - name: house-price-api
 
-          image: house-price-api:14
+          image: babujoseph5757/house-price-api:latest
 
           imagePullPolicy: Always
 
           ports:
             - containerPort: 8000
+
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: AWS_ACCESS_KEY_ID
+
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: AWS_SECRET_ACCESS_KEY
+
+            - name: AWS_DEFAULT_REGION
+              value: ap-south-1
 
           resources:
             requests:
