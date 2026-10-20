@@ -3,11 +3,12 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "babujoseph5757/house-price-api"
-        KUBE_CONFIG = "/var/lib/jenkins/.kube/config"
+        KUBECONFIG = "/var/lib/jenkins/.kube/config"
     }
 
     options {
         timestamps()
+        skipDefaultCheckout(true)
     }
 
     stages {
@@ -22,16 +23,12 @@ pipeline {
         stage('Verify Files') {
             steps {
                 sh '''
-                echo "Current Directory:"
+                echo "=== Project Files ==="
                 pwd
-
-                echo "Files:"
                 ls -la
 
-                if [ ! -f requirements.txt ]; then
-                    echo "requirements.txt not found!"
-                    exit 1
-                fi
+                test -f Dockerfile || (echo "Dockerfile not found"; exit 1)
+                test -f requirements.txt || (echo "requirements.txt not found"; exit 1)
                 '''
             }
         }
@@ -55,6 +52,7 @@ pipeline {
                 sh '''
                 if [ -d "tests" ]; then
                     echo "Running Unit Tests..."
+
                     python3 -m pytest tests/ -v
                 else
                     echo "No tests directory found. Skipping..."
@@ -72,7 +70,7 @@ pipeline {
             }
         }
 
-        stage('Security Scan') {
+        stage('Trivy Security Scan') {
             steps {
                 sh '''
                 trivy image --severity HIGH,CRITICAL \
@@ -91,7 +89,8 @@ pipeline {
                     )
                 ]) {
                     sh '''
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    echo "$DOCKER_PASS" | docker login \
+                    -u "$DOCKER_USER" --password-stdin
 
                     docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}
                     docker push ${DOCKER_IMAGE}:latest
@@ -105,7 +104,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
-                export KUBECONFIG=${KUBE_CONFIG}
+                export KUBECONFIG=${KUBECONFIG}
 
                 kubectl set image deployment/house-price-api \
                 house-price-api=${DOCKER_IMAGE}:${BUILD_NUMBER}
@@ -118,9 +117,15 @@ pipeline {
         stage('Verify Deployment') {
             steps {
                 sh '''
-                export KUBECONFIG=${KUBE_CONFIG}
+                export KUBECONFIG=${KUBECONFIG}
 
-                kubectl get pods
+                echo "=== Deployments ==="
+                kubectl get deployments
+
+                echo "=== Pods ==="
+                kubectl get pods -o wide
+
+                echo "=== Services ==="
                 kubectl get svc
                 '''
             }
@@ -135,6 +140,16 @@ pipeline {
 
         failure {
             echo '❌ Pipeline failed. Please check Jenkins console logs.'
+
+            sh '''
+            export KUBECONFIG=${KUBECONFIG}
+
+            echo "=== Pods ==="
+            kubectl get pods || true
+
+            echo "=== Recent Events ==="
+            kubectl get events --sort-by=.metadata.creationTimestamp | tail -20 || true
+            '''
         }
 
         always {
