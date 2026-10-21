@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "babujoseph5757/house-price-api"
         KUBECONFIG = "/var/lib/jenkins/.kube/config"
+        AWS_DEFAULT_REGION = "ap-south-1"
     }
 
     options {
@@ -54,7 +55,6 @@ pipeline {
                 . venv/bin/activate
 
                 pip install -r requirements.txt
-                pip install pytest
                 '''
             }
         }
@@ -93,10 +93,7 @@ pipeline {
                         variable: 'AWS_SECRET_ACCESS_KEY'
                     )
                 ]) {
-
                     sh '''
-                    export AWS_DEFAULT_REGION=ap-south-1
-
                     aws s3 ls \
                     s3://house-price-mlops-models-babuguduru/models/
                     '''
@@ -104,15 +101,27 @@ pipeline {
             }
         }
 
+        stage('Disk Usage Check') {
+            steps {
+                sh '''
+                echo "===== DISK USAGE ====="
+                df -h
+
+                echo "===== DOCKER USAGE ====="
+                docker system df || true
+                '''
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 sh '''
                 docker build \
-                -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .
+                  -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .
 
                 docker tag \
-                ${DOCKER_IMAGE}:${BUILD_NUMBER} \
-                ${DOCKER_IMAGE}:latest
+                  ${DOCKER_IMAGE}:${BUILD_NUMBER} \
+                  ${DOCKER_IMAGE}:latest
                 '''
             }
         }
@@ -121,8 +130,8 @@ pipeline {
             steps {
                 sh '''
                 trivy image \
-                --severity HIGH,CRITICAL \
-                ${DOCKER_IMAGE}:${BUILD_NUMBER} || true
+                  --severity HIGH,CRITICAL \
+                  ${DOCKER_IMAGE}:${BUILD_NUMBER} || true
                 '''
             }
         }
@@ -136,14 +145,12 @@ pipeline {
                         passwordVariable: 'DOCKER_PASS'
                     )
                 ]) {
-
                     sh '''
                     echo "$DOCKER_PASS" | docker login \
                     -u "$DOCKER_USER" \
                     --password-stdin
 
                     docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}
-
                     docker push ${DOCKER_IMAGE}:latest
 
                     docker logout
@@ -172,9 +179,7 @@ pipeline {
                 export KUBECONFIG=${KUBECONFIG}
 
                 kubectl get deployments
-
                 kubectl get pods -o wide
-
                 kubectl get svc
                 '''
             }
