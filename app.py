@@ -1,105 +1,142 @@
-import mlflow.pyfunc
+import os
+import boto3
+import joblib
 import pandas as pd
 
 from flask import Flask, request, jsonify
 from prometheus_client import Counter, generate_latest
 
-app = Flask(__name__)
+BUCKET_NAME = "house-price-mlops-models-babuguduru"
 
-MODEL_URI = "models:/HousePriceModel@production"
+MODEL_PATH = "artifacts/model.pkl"
+PREPROCESSOR_PATH = "artifacts/preprocessor.pkl"
 
 prediction_counter = Counter(
     "prediction_requests_total",
     "Total prediction requests"
 )
 
-model = None
 
+def download_artifacts():
+    os.makedirs("artifacts", exist_ok=True)
 
-def load_model():
-    global model
+    s3 = boto3.client("s3")
 
-    if model is None:
-        print(
-            f"Loading model from MLflow Registry: {MODEL_URI}"
+    if not os.path.exists(MODEL_PATH):
+        print("Downloading model.pkl from S3...")
+
+        s3.download_file(
+            BUCKET_NAME,
+            "models/model.pkl",
+            MODEL_PATH
         )
 
-        model = mlflow.pyfunc.load_model(
-            MODEL_URI
+    if not os.path.exists(PREPROCESSOR_PATH):
+        print("Downloading preprocessor.pkl from S3...")
+
+        s3.download_file(
+            BUCKET_NAME,
+            "models/preprocessor.pkl",
+            PREPROCESSOR_PATH
         )
 
-    return model
+
+def load_dependencies():
+
+    download_artifacts()
+
+    model = joblib.load(MODEL_PATH)
+
+    preprocessor = joblib.load(PREPROCESSOR_PATH)
+
+    return model, preprocessor
 
 
-@app.route("/", methods=["GET"])
-def home():
-    return jsonify({
-        "message": "House Price Prediction API is running"
-    })
+def create_app(model=None, preprocessor=None):
 
+    app = Flask(__name__)
 
-@app.route("/health", methods=["GET"])
-def health():
-    return jsonify({
-        "status": "healthy"
-    })
-
-
-@app.route("/metrics", methods=["GET"])
-def metrics():
-    return generate_latest(), 200, {
-        "Content-Type": "text/plain"
-    }
-
-
-@app.route("/predict", methods=["POST"])
-def predict():
-
-    try:
-
-        prediction_counter.inc()
-
-        model = load_model()
-
-        payload = request.get_json()
-
-        required_columns = [
-            "longitude",
-            "latitude",
-            "housing_median_age",
-            "total_rooms",
-            "total_bedrooms",
-            "population",
-            "households",
-            "median_income",
-            "ocean_proximity"
-        ]
-
-        missing_columns = (
-            set(required_columns)
-            - set(payload.keys())
-        )
-
-        if missing_columns:
-            return jsonify({
-                "error":
-                f"columns are missing: {missing_columns}"
-            }), 400
-
-        input_df = pd.DataFrame([payload])
-
-        prediction = model.predict(input_df)
-
+    @app.route("/", methods=["GET"])
+    def home():
         return jsonify({
-            "predicted_house_price":
-            round(float(prediction[0]), 2)
+            "message": "House Price Prediction API is running"
         })
 
-    except Exception as e:
-
+    @app.route("/health", methods=["GET"])
+    def health():
         return jsonify({
-            "error": str(e)
-        }), 500
+            "status": "healthy"
+        })
+
+    @app.route("/metrics", methods=["GET"])
+    def metrics():
+        return generate_latest(), 200, {
+            "Content-Type": "text/plain"
+        }
+
+    @app.route("/predict", methods=["POST"])
+    def predict():
+
+        try:
+
+            prediction_counter.inc()
+
+            nonlocal model
+            nonlocal preprocessor
+
+            if model is None or preprocessor is None:
+                model, preprocessor = load_dependencies()
+
+            payload = request.get_json()
+
+            required_columns = [
+                "longitude",
+                "latitude",
+                "housing_median_age",
+                "total_rooms",
+                "total_bedrooms",
+                "population",
+                "households",
+                "median_income",
+                "ocean_proximity"
+            ]
+
+            missing_columns = (
+                set(required_columns)
+                - set(payload.keys())
+            )
+
+            if missing_columns:
+                return jsonify({
+                    "error":
+                    f"columns are missing: {missing_columns}"
+                }), 400
+
+            input_df = pd.DataFrame([payload])
+
+            transformed_data = (
+                preprocessor.transform(input_df)
+            )
+
+            prediction = model.predict(
+                transformed_data
+            )
+
+            return jsonify({
+                "predicted_house_price":
+                round(float(prediction[0]), 2)
+            })
+
+        except Exception as e:
+
+            return jsonify({
+                "error": str(e)
+            }), 500
+
+    return app
+
+
+app = create_app()
 
 
 if __name__ == "__main__":
