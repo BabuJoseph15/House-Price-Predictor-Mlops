@@ -1,5 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
   name: house-price-api
   labels:
@@ -43,6 +44,9 @@ spec:
 
             - name: AWS_DEFAULT_REGION
               value: ap-south-1
+
+            - name: MLFLOW_TRACKING_URI
+              value: "http://15.134.131.84:5000"
 
           resources:
             requests:

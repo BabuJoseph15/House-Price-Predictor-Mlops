@@ -4,7 +4,6 @@ pipeline {
     environment {
         DOCKER_IMAGE = "babujoseph5757/house-price-api"
         KUBECONFIG = "/var/lib/jenkins/.kube/config"
-        AWS_DEFAULT_REGION = "ap-south-1"
     }
 
     options {
@@ -96,20 +95,12 @@ pipeline {
                 ]) {
 
                     sh '''
+                    export AWS_DEFAULT_REGION=ap-south-1
+
                     aws s3 ls \
                     s3://house-price-mlops-models-babuguduru/models/
                     '''
                 }
-            }
-        }
-
-        stage('Disk Usage Check') {
-            steps {
-                sh '''
-                df -h
-
-                docker system df || true
-                '''
             }
         }
 
@@ -210,7 +201,8 @@ pipeline {
             kubectl get deployments || true
 
             kubectl get events \
-            --sort-by=.metadata.creationTimestamp | tail -20 || true
+            --sort-by=.metadata.creationTimestamp \
+            | tail -20 || true
             '''
         }
 
