@@ -24,17 +24,17 @@ pipeline {
         stage('Verify Files') {
             steps {
                 sh '''
-                pwd
                 ls -la
 
-                test -f Dockerfile
-                test -f requirements.txt
                 test -f app.py
+                test -f requirements.txt
+                test -f Dockerfile
+                test -d templates
                 '''
             }
         }
 
-        stage('Create Python Environment') {
+        stage('Create Virtual Environment') {
             steps {
                 sh '''
                 python3 -m venv venv
@@ -42,7 +42,6 @@ pipeline {
                 . venv/bin/activate
 
                 python --version
-                pip --version
 
                 pip install --upgrade pip
                 '''
@@ -93,6 +92,7 @@ pipeline {
                         variable: 'AWS_SECRET_ACCESS_KEY'
                     )
                 ]) {
+
                     sh '''
                     aws s3 ls \
                     s3://house-price-mlops-models-babuguduru/models/
@@ -101,27 +101,15 @@ pipeline {
             }
         }
 
-        stage('Disk Usage Check') {
-            steps {
-                sh '''
-                echo "===== DISK USAGE ====="
-                df -h
-
-                echo "===== DOCKER USAGE ====="
-                docker system df || true
-                '''
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 sh '''
                 docker build \
-                  -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .
+                    -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .
 
                 docker tag \
-                  ${DOCKER_IMAGE}:${BUILD_NUMBER} \
-                  ${DOCKER_IMAGE}:latest
+                    ${DOCKER_IMAGE}:${BUILD_NUMBER} \
+                    ${DOCKER_IMAGE}:latest
                 '''
             }
         }
@@ -130,8 +118,8 @@ pipeline {
             steps {
                 sh '''
                 trivy image \
-                  --severity HIGH,CRITICAL \
-                  ${DOCKER_IMAGE}:${BUILD_NUMBER} || true
+                    --severity HIGH,CRITICAL \
+                    ${DOCKER_IMAGE}:${BUILD_NUMBER} || true
                 '''
             }
         }
@@ -145,10 +133,11 @@ pipeline {
                         passwordVariable: 'DOCKER_PASS'
                     )
                 ]) {
+
                     sh '''
                     echo "$DOCKER_PASS" | docker login \
-                    -u "$DOCKER_USER" \
-                    --password-stdin
+                      -u "$DOCKER_USER" \
+                      --password-stdin
 
                     docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}
                     docker push ${DOCKER_IMAGE}:latest
@@ -165,10 +154,10 @@ pipeline {
                 export KUBECONFIG=${KUBECONFIG}
 
                 kubectl set image deployment/house-price-api \
-                house-price-api=${DOCKER_IMAGE}:${BUILD_NUMBER}
+                  house-price-api=${DOCKER_IMAGE}:${BUILD_NUMBER}
 
                 kubectl rollout status deployment/house-price-api \
-                --timeout=300s
+                  --timeout=300s
                 '''
             }
         }
@@ -179,7 +168,9 @@ pipeline {
                 export KUBECONFIG=${KUBECONFIG}
 
                 kubectl get deployments
+
                 kubectl get pods -o wide
+
                 kubectl get svc
                 '''
             }
@@ -189,25 +180,17 @@ pipeline {
     post {
 
         success {
-            echo '✅ CI/CD Pipeline completed successfully!'
+            echo '✅ MLOps Platform deployed successfully!'
         }
 
         failure {
-            echo '❌ Pipeline failed. Collecting diagnostics...'
+            echo '❌ Pipeline failed'
 
             sh '''
-            df -h || true
-
-            docker system df || true
-
-            export KUBECONFIG=${KUBECONFIG}
-
             kubectl get pods || true
-            kubectl get deployments || true
 
             kubectl get events \
-            --sort-by=.metadata.creationTimestamp \
-            | tail -20 || true
+            --sort-by=.metadata.creationTimestamp | tail -20 || true
             '''
         }
 

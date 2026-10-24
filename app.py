@@ -3,8 +3,19 @@ import boto3
 import joblib
 import pandas as pd
 
-from flask import Flask, request, jsonify
-from prometheus_client import Counter, generate_latest
+from flask import render_template
+
+from flask import (
+    Flask,
+    request,
+    jsonify,
+    render_template
+)
+
+from prometheus_client import (
+    Counter,
+    generate_latest
+)
 
 BUCKET_NAME = "house-price-mlops-models-babuguduru"
 
@@ -18,11 +29,13 @@ prediction_counter = Counter(
 
 
 def download_artifacts():
+
     os.makedirs("artifacts", exist_ok=True)
 
     s3 = boto3.client("s3")
 
     if not os.path.exists(MODEL_PATH):
+
         print("Downloading model.pkl from S3...")
 
         s3.download_file(
@@ -32,6 +45,7 @@ def download_artifacts():
         )
 
     if not os.path.exists(PREPROCESSOR_PATH):
+
         print("Downloading preprocessor.pkl from S3...")
 
         s3.download_file(
@@ -47,45 +61,159 @@ def load_dependencies():
 
     model = joblib.load(MODEL_PATH)
 
-    preprocessor = joblib.load(PREPROCESSOR_PATH)
+    preprocessor = joblib.load(
+        PREPROCESSOR_PATH
+    )
 
     return model, preprocessor
 
 
-def create_app(model=None, preprocessor=None):
+def create_app(
+    model=None,
+    preprocessor=None
+):
 
     app = Flask(__name__)
 
-    @app.route("/", methods=["GET"])
-    def home():
-        return jsonify({
-            "message": "House Price Prediction API is running"
-        })
+    @app.route("/", methods=["GET", "POST"])
+    def index():
+
+        nonlocal model
+        nonlocal preprocessor
+
+        prediction = None
+
+        if request.method == "POST":
+
+            try:
+
+                if (
+                    model is None or
+                    preprocessor is None
+                ):
+                    model, preprocessor = (
+                        load_dependencies()
+                    )
+
+                payload = {
+                    "longitude": float(
+                        request.form["longitude"]
+                    ),
+                    "latitude": float(
+                        request.form["latitude"]
+                    ),
+                    "housing_median_age": int(
+                        request.form[
+                            "housing_median_age"
+                        ]
+                    ),
+                    "total_rooms": int(
+                        request.form[
+                            "total_rooms"
+                        ]
+                    ),
+                    "total_bedrooms": int(
+                        request.form[
+                            "total_bedrooms"
+                        ]
+                    ),
+                    "population": int(
+                        request.form[
+                            "population"
+                        ]
+                    ),
+                    "households": int(
+                        request.form[
+                            "households"
+                        ]
+                    ),
+                    "median_income": float(
+                        request.form[
+                            "median_income"
+                        ]
+                    ),
+                    "ocean_proximity":
+                        request.form[
+                            "ocean_proximity"
+                        ]
+                }
+
+                input_df = pd.DataFrame(
+                    [payload]
+                )
+
+                transformed_data = (
+                    preprocessor.transform(
+                        input_df
+                    )
+                )
+
+                result = model.predict(
+                    transformed_data
+                )
+
+                prediction = round(
+                    float(result[0]),
+                    2
+                )
+
+                prediction_counter.inc()
+
+            except Exception as e:
+
+                return render_template(
+                    "index.html",
+                    prediction=None,
+                    error=str(e)
+                )
+
+        return render_template(
+            "index.html",
+            prediction=prediction
+        )
 
     @app.route("/health", methods=["GET"])
     def health():
+
         return jsonify({
             "status": "healthy"
         })
 
-    @app.route("/metrics", methods=["GET"])
+    @app.route(
+        "/metrics",
+        methods=["GET"]
+    )
     def metrics():
-        return generate_latest(), 200, {
-            "Content-Type": "text/plain"
-        }
 
-    @app.route("/predict", methods=["POST"])
+        return (
+            generate_latest(),
+            200,
+            {
+                "Content-Type":
+                "text/plain"
+            }
+        )
+
+    @app.route(
+        "/predict",
+        methods=["POST"]
+    )
     def predict():
+
+        nonlocal model
+        nonlocal preprocessor
 
         try:
 
             prediction_counter.inc()
 
-            nonlocal model
-            nonlocal preprocessor
-
-            if model is None or preprocessor is None:
-                model, preprocessor = load_dependencies()
+            if (
+                model is None or
+                preprocessor is None
+            ):
+                model, preprocessor = (
+                    load_dependencies()
+                )
 
             payload = request.get_json()
 
@@ -107,24 +235,33 @@ def create_app(model=None, preprocessor=None):
             )
 
             if missing_columns:
+
                 return jsonify({
                     "error":
-                    f"columns are missing: {missing_columns}"
+                    f"columns are missing: "
+                    f"{missing_columns}"
                 }), 400
 
-            input_df = pd.DataFrame([payload])
-
-            transformed_data = (
-                preprocessor.transform(input_df)
+            input_df = pd.DataFrame(
+                [payload]
             )
 
-            prediction = model.predict(
+            transformed_data = (
+                preprocessor.transform(
+                    input_df
+                )
+            )
+
+            result = model.predict(
                 transformed_data
             )
 
             return jsonify({
                 "predicted_house_price":
-                round(float(prediction[0]), 2)
+                round(
+                    float(result[0]),
+                    2
+                )
             })
 
         except Exception as e:
@@ -140,6 +277,7 @@ app = create_app()
 
 
 if __name__ == "__main__":
+
     app.run(
         host="0.0.0.0",
         port=8000,
