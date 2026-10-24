@@ -17,11 +17,13 @@ from app import create_app
 
 
 class MockPreprocessor:
+
     def transform(self, dataframe):
         return np.array([[1.0, 2.0, 3.0]])
 
 
 class MockModel:
+
     def predict(self, dataframe):
         return [431942.36]
 
@@ -35,16 +37,19 @@ client = app.test_client()
 
 
 def test_home():
+
     response = client.get("/")
 
     assert response.status_code == 200
 
-    data = response.get_json()
-
-    assert data["message"] == "House Price Prediction API is running"
+    assert (
+        b"House Price Prediction Platform"
+        in response.data
+    )
 
 
 def test_health():
+
     response = client.get("/health")
 
     assert response.status_code == 200
@@ -55,6 +60,7 @@ def test_health():
 
 
 def test_metrics():
+
     response = client.get("/metrics")
 
     assert response.status_code == 200
@@ -85,7 +91,10 @@ def test_predict_success():
 
     assert "predicted_house_price" in data
 
-    assert data["predicted_house_price"] == 431942.36
+    assert (
+        data["predicted_house_price"]
+        == 431942.36
+    )
 
 
 def test_predict_missing_columns():
