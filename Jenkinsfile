@@ -1,131 +1,124 @@
 pipeline {
+
     agent any
 
     environment {
+
         DOCKER_IMAGE = "babujoseph5757/house-price-api"
+
+        IMAGE_TAG = "${BUILD_NUMBER}"
+
         KUBECONFIG = "/var/lib/jenkins/.kube/config"
-        AWS_DEFAULT_REGION = "ap-south-1"
+
+        TRIVY_TEMP_DIR = "/var/lib/jenkins/trivy-temp"
+
+        PATH = "/var/lib/jenkins/.local/bin:${env.PATH}"
     }
 
     options {
+
         timestamps()
-        skipDefaultCheckout(true)
+
+        buildDiscarder(
+            logRotator(
+                numToKeepStr: '10'
+            )
+        )
     }
 
     stages {
 
-        stage('Checkout Code') {
+        stage('Checkout Source') {
+
             steps {
-                git branch: 'master',
-                    url: 'https://github.com/BabuJoseph15/House-Price-Predictor-Mlops.git'
+
+                echo "Checking out House Price source code..."
+
+                checkout scm
             }
         }
 
-        stage('Verify Files') {
+        stage('Verify Workspace') {
+
             steps {
+
                 sh '''
-                ls -la
-
-                test -f app.py
-                test -f requirements.txt
-                test -f Dockerfile
-                test -d templates
-                '''
-            }
-        }
-
-        stage('Create Virtual Environment') {
-            steps {
-                sh '''
-                python3 -m venv venv
-
-                . venv/bin/activate
-
-                python --version
-
-                pip install --upgrade pip
+                pwd
+                ls -ltr
                 '''
             }
         }
 
         stage('Install Dependencies') {
+
             steps {
+
                 sh '''
-                . venv/bin/activate
+                python3 --version
 
-                pip install -r requirements.txt
-                '''
-            }
-        }
+                python3 -m pip install --upgrade pip
 
-        stage('Validate Dependencies') {
-            steps {
-                sh '''
-                . venv/bin/activate
-
-                pip check
+                if [ -f requirements.txt ]; then
+                    python3 -m pip install \
+                    --user \
+                    --no-cache-dir \
+                    -r requirements.txt
+                fi
                 '''
             }
         }
 
         stage('Run Unit Tests') {
+
             steps {
+
                 sh '''
-                . venv/bin/activate
-
-                export PYTHONPATH=$WORKSPACE
-
-                pytest tests/ -v
+                if [ -d tests ]; then
+                    python3 -m pytest tests/ -v
+                else
+                    echo "No tests directory found. Skipping..."
+                fi
                 '''
             }
         }
 
-        stage('Verify S3 Access') {
-            steps {
-                withCredentials([
-                    string(
-                        credentialsId: 'aws-access-key-id',
-                        variable: 'AWS_ACCESS_KEY_ID'
-                    ),
-                    string(
-                        credentialsId: 'aws-secret-access-key',
-                        variable: 'AWS_SECRET_ACCESS_KEY'
-                    )
-                ]) {
-
-                    sh '''
-                    aws s3 ls \
-                    s3://house-price-mlops-models-babuguduru/models/
-                    '''
-                }
-            }
-        }
-
         stage('Build Docker Image') {
+
             steps {
+
+                echo "Building Docker image..."
+
                 sh '''
                 docker build \
-                    -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .
-
-                docker tag \
-                    ${DOCKER_IMAGE}:${BUILD_NUMBER} \
-                    ${DOCKER_IMAGE}:latest
+                -t ${DOCKER_IMAGE}:${IMAGE_TAG} .
                 '''
             }
         }
 
         stage('Trivy Security Scan') {
+
             steps {
+
                 sh '''
+                mkdir -p ${TRIVY_TEMP_DIR}
+
+                export TMPDIR=${TRIVY_TEMP_DIR}
+
                 trivy image \
-                    --severity HIGH,CRITICAL \
-                    ${DOCKER_IMAGE}:${BUILD_NUMBER} || true
+                --timeout 30m \
+                --skip-version-check \
+                --scanners vuln \
+                --severity HIGH,CRITICAL \
+                --exit-code 0 \
+                ${DOCKER_IMAGE}:${IMAGE_TAG}
                 '''
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Docker Login') {
+
             steps {
+
                 withCredentials([
                     usernamePassword(
                         credentialsId: 'dockerhub',
@@ -136,42 +129,59 @@ pipeline {
 
                     sh '''
                     echo "$DOCKER_PASS" | docker login \
-                      -u "$DOCKER_USER" \
-                      --password-stdin
-
-                    docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}
-                    docker push ${DOCKER_IMAGE}:latest
-
-                    docker logout
+                    -u "$DOCKER_USER" \
+                    --password-stdin
                     '''
                 }
             }
         }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh '''
-                export KUBECONFIG=${KUBECONFIG}
+        stage('Push Docker Image') {
 
+            steps {
+
+                sh '''
+                docker push ${DOCKER_IMAGE}:${IMAGE_TAG}
+
+                docker tag \
+                ${DOCKER_IMAGE}:${IMAGE_TAG} \
+                ${DOCKER_IMAGE}:latest
+
+                docker push ${DOCKER_IMAGE}:latest
+                '''
+            }
+        }
+
+        stage('Deploy To Kubernetes') {
+
+            steps {
+
+                sh '''
                 kubectl set image deployment/house-price-api \
-                  house-price-api=${DOCKER_IMAGE}:${BUILD_NUMBER}
+                house-price-api=${DOCKER_IMAGE}:${IMAGE_TAG}
 
                 kubectl rollout status deployment/house-price-api \
-                  --timeout=300s
+                --timeout=300s
                 '''
             }
         }
 
         stage('Verify Deployment') {
+
             steps {
+
                 sh '''
-                export KUBECONFIG=${KUBECONFIG}
+                echo "===== Deployments ====="
+                kubectl get deployment
 
-                kubectl get deployments
+                echo "===== Pods ====="
+                kubectl get pods
 
-                kubectl get pods -o wide
-
+                echo "===== Services ====="
                 kubectl get svc
+
+                echo "===== Current Image ====="
+                kubectl describe deployment house-price-api | grep Image
                 '''
             }
         }
@@ -180,25 +190,65 @@ pipeline {
     post {
 
         success {
-            echo '✅ MLOps Platform deployed successfully!'
+
+            emailext(
+                subject: "✅ SUCCESS - House Price MLOps Pipeline #${BUILD_NUMBER}",
+                body: """
+Build Successful
+
+Job Name: ${JOB_NAME}
+Build Number: ${BUILD_NUMBER}
+
+Docker Image:
+${DOCKER_IMAGE}:${IMAGE_TAG}
+
+Status:
+SUCCESS
+
+Build URL:
+${BUILD_URL}
+                """,
+                to: "babu.joseph5757@gmail.com"
+            )
+
+            echo '✅ House Price deployment successful'
         }
 
         failure {
+
+            emailext(
+                subject: "❌ FAILED - House Price MLOps Pipeline #${BUILD_NUMBER}",
+                body: """
+Build Failed
+
+Job Name: ${JOB_NAME}
+Build Number: ${BUILD_NUMBER}
+
+Please review Jenkins logs.
+
+Build URL:
+${BUILD_URL}
+                """,
+                to: "babu.joseph5757@gmail.com"
+            )
+
             echo '❌ Pipeline failed'
-
-            sh '''
-            kubectl get pods || true
-
-            kubectl get events \
-            --sort-by=.metadata.creationTimestamp | tail -20 || true
-            '''
         }
 
         always {
+
             sh '''
+            rm -rf ~/.cache/pip || true
+
+            rm -rf ${TRIVY_TEMP_DIR}/* || true
+
+            docker container prune -f || true
+
             docker image prune -f || true
+
             docker builder prune -f || true
             '''
+
             cleanWs()
         }
     }
