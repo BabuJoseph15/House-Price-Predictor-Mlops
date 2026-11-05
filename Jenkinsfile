@@ -12,18 +12,7 @@ pipeline {
 
         TRIVY_TEMP_DIR = "/var/lib/jenkins/trivy-temp"
 
-        PATH = "/var/lib/jenkins/.local/bin:${env.PATH}"
-    }
-
-    options {
-
-        timestamps()
-
-        buildDiscarder(
-            logRotator(
-                numToKeepStr: '10'
-            )
-        )
+        EMAIL_RECIPIENT = "babu.joseph5757@gmail.com"
     }
 
     stages {
@@ -31,40 +20,46 @@ pipeline {
         stage('Checkout Source') {
 
             steps {
-
-                echo "Checking out House Price source code..."
-
                 checkout scm
             }
         }
 
-        stage('Verify Workspace') {
+        stage('SonarQube Analysis') {
 
             steps {
 
-                sh '''
-                pwd
-                ls -ltr
-                '''
+                withSonarQubeEnv('sonarqube-server') {
+
+                    withCredentials([
+                        string(
+                            credentialsId: 'house-price-sonar-token',
+                            variable: 'SONAR_TOKEN'
+                        )
+                    ]) {
+
+                        sh '''
+                        sonar-scanner \
+                        -Dsonar.projectKey=house-price-mlops \
+                        -Dsonar.projectName="House Price MLOps" \
+                        -Dsonar.host.url=$SONAR_HOST_URL \
+                        -Dsonar.token=$SONAR_TOKEN
+                        '''
+                    }
+                }
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Quality Gate') {
 
             steps {
 
-                sh '''
-                python3 --version
+                timeout(
+                    time: 10,
+                    unit: 'MINUTES'
+                ) {
 
-                python3 -m pip install --upgrade pip
-
-                if [ -f requirements.txt ]; then
-                    python3 -m pip install \
-                    --user \
-                    --no-cache-dir \
-                    -r requirements.txt
-                fi
-                '''
+                    waitForQualityGate abortPipeline: false
+                }
             }
         }
 
@@ -76,7 +71,7 @@ pipeline {
                 if [ -d tests ]; then
                     python3 -m pytest tests/ -v
                 else
-                    echo "No tests directory found. Skipping..."
+                    echo "No tests found. Skipping..."
                 fi
                 '''
             }
@@ -86,16 +81,15 @@ pipeline {
 
             steps {
 
-                echo "Building Docker image..."
-
                 sh '''
                 docker build \
-                -t ${DOCKER_IMAGE}:${IMAGE_TAG} .
+                -t ${DOCKER_IMAGE}:${IMAGE_TAG} \
+                .
                 '''
             }
         }
 
-        stage('Trivy Security Scan') {
+        stage('Trivy Scan') {
 
             steps {
 
@@ -105,7 +99,7 @@ pipeline {
                 export TMPDIR=${TRIVY_TEMP_DIR}
 
                 trivy image \
-                --timeout 30m \
+                --timeout 20m \
                 --skip-version-check \
                 --scanners vuln \
                 --severity HIGH,CRITICAL \
@@ -165,26 +159,6 @@ pipeline {
                 '''
             }
         }
-
-        stage('Verify Deployment') {
-
-            steps {
-
-                sh '''
-                echo "===== Deployments ====="
-                kubectl get deployment
-
-                echo "===== Pods ====="
-                kubectl get pods
-
-                echo "===== Services ====="
-                kubectl get svc
-
-                echo "===== Current Image ====="
-                kubectl describe deployment house-price-api | grep Image
-                '''
-            }
-        }
     }
 
     post {
@@ -192,61 +166,39 @@ pipeline {
         success {
 
             emailext(
-                subject: "✅ SUCCESS - House Price MLOps Pipeline #${BUILD_NUMBER}",
+                to: "${EMAIL_RECIPIENT}",
+                subject: "SUCCESS - ${JOB_NAME} #${BUILD_NUMBER}",
                 body: """
-Build Successful
+House Price Pipeline Successful
 
-Job Name: ${JOB_NAME}
 Build Number: ${BUILD_NUMBER}
-
-Docker Image:
-${DOCKER_IMAGE}:${IMAGE_TAG}
-
-Status:
-SUCCESS
 
 Build URL:
 ${BUILD_URL}
-                """,
-                to: "babu.joseph5757@gmail.com"
+"""
             )
-
-            echo '✅ House Price deployment successful'
         }
 
         failure {
 
             emailext(
-                subject: "❌ FAILED - House Price MLOps Pipeline #${BUILD_NUMBER}",
+                to: "${EMAIL_RECIPIENT}",
+                subject: "FAILED - ${JOB_NAME} #${BUILD_NUMBER}",
                 body: """
-Build Failed
-
-Job Name: ${JOB_NAME}
-Build Number: ${BUILD_NUMBER}
-
-Please review Jenkins logs.
+House Price Pipeline Failed
 
 Build URL:
 ${BUILD_URL}
-                """,
-                to: "babu.joseph5757@gmail.com"
+"""
             )
-
-            echo '❌ Pipeline failed'
         }
 
         always {
 
             sh '''
-            rm -rf ~/.cache/pip || true
-
-            rm -rf ${TRIVY_TEMP_DIR}/* || true
-
-            docker container prune -f || true
-
-            docker image prune -f || true
-
             docker builder prune -f || true
+            docker container prune -f || true
+            docker image prune -f || true
             '''
 
             cleanWs()
