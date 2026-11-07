@@ -1,1000 +1,1006 @@
+  116  cd ..
+  117  git status
+  118  git add .
+  119  git commit -m "Enhanced RAG backend, frontend and CI/CD pipeline"
+  120  git push origin master
+  121  cd ~/LLMOps-RAG-Chatbot
+  122  minikube start   --driver=docker   --cpus=2   --memory=6144
+  123  sudo su - jenkins
+  124  sudo systemctl status jenkins
+  125  nohup streamlit run streamlit_app.py   --server.port 8501   --server.address 0.0.0.0   > streamlit.log 2>&1 &
+  126  df -h
+  127  tree
+  128  chmod -R 755 frontend/
+  129  chmod -R 755 Jenkinsfile 
+  130  tree
+  131  pkill -f uvicorn
+  132  chmod -R 755 backend/
+  133  tree
+  134  cd frontend/
+  135  ls -lart
+  136  vi Dockerfile 
+  137  ls -lart
+  138  cd ..
+  139  tree
+  140  ls -lart
+  141  vi .dockerignore 
+  142  ls -lart
+  143  >Jenkinsfile 
+  144  vi Jenkinsfile 
+  145  git add .
+  146  git commit -m "Updated CI/CD Pipeline"
+  147  git push origin master
+  148  tree
+  149  cd tests/
+  150  >test_app.py 
+  151  vi test_app.py 
+  152  cd ..
+  153  >Jenkinsfile 
+  154  vi Jenkinsfile 
+  155  git add .
+  156  git commit -m "Fixed pytest import and updated CI/CD pipeline"
+  157  git push origin master
+  158  docker system df
+  159  docker system df -v
+  160  docker rmi babujoseph5757/rag-chatbot:10
+  161  docker rmi babujoseph5757/rag-chatbot:11
+  162  docker rmi babujoseph5757/rag-chatbot:12
+  163  docker builder prune -a -f
+  164  docker system df -v
+  165  df -h
+  166  docker image prune -f
+  167  git status
+  168  cd backend/
+  169  touch backend/__init__.py
+  170  cd ..
+  171  touch backend/__init__.py
+  172  vi tests/test_app.py 
+  173  vi backend/app.py 
+  174  tree
+  175  git add .
+  176  git commit -m "Fixed backend package imports for pytest"
+  177  git push origin master
+  178  vi frontend/Dockerfile 
+  179  git add .
+  180  git commit -m "Fixed backend package imports for pytest"
+  181  git push origin master
+  182  vi deployment.yaml 
+  183  minikube status
+  184  cd ~/LLMOps-RAG-Chatbot
+  185  sudo su - jenkins
+  186  nohup /home/ec2-user/LLMOps-RAG-Chatbot/venv/bin/uvicorn app:app   --host 0.0.0.0   --port 8000   > uvicorn.log 2>&1 &
+  187  nohup streamlit run streamlit_app.py   --server.port 8501   --server.address 0.0.0.0   > streamlit.log 2>&1 &
+  188  >Jenkinsfile 
+  189  vi Jenkinsfile 
+  190  >Jenkinsfile 
+  191  vi Jenkinsfile 
+  192  git add .
+  193  git commit -m "Updated Trivy timeout and scanner configuration"
+  194  git push origin master
+  195  df -h
+  196  cd ..
+  197  cd House-Price-Predictor-Mlops/
+  198  ls -lart
+  199  >Jenkinsfile 
+  200  vi Jenkinsfile 
+  201  git add .
+  202  git commit -m "Updated CI/CD Pipeline"
+  203  git push origin master
+  204  df -h
+  205  cd ~/LLMOps-RAG-Chatbot
+  206  minikube start   --driver=docker   --cpus=2   --memory=6144
+  207  sudo systemctl status jenkins
+  208  df -h
+  209  docker system df -v
+  210  docker rmi babujoseph5757/rag-chatbot:16
+  211  docker rmi babujoseph5757/rag-chatbot:17
+  212  docker rmi babujoseph5757/rag-chatbot:v13
+  213  docker rmi babujoseph5757/rag-chatbot-frontend:v1
+  214  df -h
+  215  docker builder prune -a -f
+  216  df -h
+  217  docker image prune -f
+  218  \
+  219  docker container prune -f
+  220  kubectl describe deployment rag-chatbot | grep Image
+  221  kubectl get pods
+  222  kubectl get deployment
+  223  kubectl get svc
+  224  kubectl describe pod rag-chatbot-c6d44ddb6-gstjz
+  225  cd backend/
+  226  ls -lart
+  227  >app.py 
+  228  vi app.py 
+  229  >Dockerfile 
+  230  vi Dockerfile 
+  231  cd ..
+  232  tree
+  233  kubectl logs rag-chatbot-c6d44ddb6-gstjz --previous
+  234  cd backend/
+  235  vi app.py 
+  236  >app.py 
+  237  vi app.py 
+  238  cd ..
+  239  vi Jenkinsfile 
+  240  >Jenkinsfile 
+  241  vi Jenkinsfile 
+  242  git add .
+  243  git add backend/app.py
+  244  git commit -m "Fixed rag_pipeline import"
+  245  git push origin main
+  246  git commit -m "Fixed rag_pipeline import"
+  247  git status
+  248  git push origin master
+  249  vi Jenkinsfile 
+  250  >Jenkinsfile 
+  251  vi Jenkinsfile 
+  252  git add .
+  253  git commit -m "Fixed email notification syntax"
+  254  git push origin master
+  255  vi backend/app.py 
+  256  cd backend/
+  257  >app.py 
+  258  vi app.py 
+  259  cd ..
+  260  vi Jenkinsfile 
+  261  >Jenkinsfile 
+  262  vi Jenkinsfile 
+  263  git add .
+  264  git commit -m "Fixed rag_pipeline import for pytest and Docker"
+  265  git push origin master
+  266  df -h
+  267  kubectl get pods -n monitoring
+  268  kubectl get nodes
+  269  kubectl create namespace monitoring
+  270  helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+  271  helm repo add grafana https://grafana.github.io/helm-charts
+  272  helm repo update
+  273  nohup kubectl port-forward -n monitoring svc/grafana 3000:80 --address 0.0.0.0 > grafana-portforward.log 2>&1
+  274  helm install prometheus prometheus-community/prometheus -n monitoring
+  275  kubectl get pods -n monitoring
+  276  minikube addons enable metrics-server
+  277  kubectl top nodes
+  278  helm install grafana grafana/grafana -n monitoring
+  279  kubectl top nodes
+  280  nohup kubectl port-forward -n monitoring svc/grafana 3000:80 --address 0.0.0.0 > grafana-portforward.log 2>&1
+  281  minikube addons enable metrics-server
+  282  kubectl get apiservices | grep metrics
+  283  kubectl logs -n kube-system deployment/metrics-server
+  284  kubectl get apiservices | grep metrics
+  285  kubectl get pods -n kube-system | grep metrics
+  286  kubectl top nodes
+  287  kubectl describe apiservice v1beta1.metrics.k8s.io
+  288  nohup kubectl port-forward -n monitoring svc/grafana 3000:80 --address 0.0.0.0 > grafana.log 2>&1 &
+  289  nohup kubectl port-forward -n monitoring svc/prometheus-server 9090:80 --address 0.0.0.0 > prometheus.log 2>&1 &
+  290  curl http://localhost:9090/-/healthy
+  291  curl http://localhost:3000
+  292  kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+  293  minikube ip
+  294  curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
+  295    "question":"What is Kubernetes?"
+  296  }'
+  297  ls -ltr chroma_db
+  298  kubectl exec -it deployment/rag-chatbot -- ls -ltr /app
+  299  kubectl exec -it deployment/rag-chatbot -- ls -ltr /app/chroma_db
+  300  kubectl exec -it deployment/rag-chatbot -- find /app/chroma_db -type f
+  301  ls -lart
+  302  pwd
+  303  mv chroma_db backend/
+  304  ls -lart
+  305  cd backend/
+  306  ls -lart
+  307  vi Dockerfile 
+  308  git status
+  309  git add .
+  310  git commit -m "Fixed rag_pipeline import for pytest and Docker"
+  311  git push origin master
+  312  cd ~/LLMOps-RAG-Chatbot
+  313  python3 -m venv venv
+  314  source venv/bin/activate
+  315  minikube start   --driver=docker   --cpus=2   --memory=6144
+  316  sudo su - jenkins
+  317  sudo systemctl status jenkins
+  318  nohup streamlit run streamlit_app.py   --server.port 8501   --server.address 0.0.0.0   > streamlit.log 2>&1 &
+  319  nohup /home/ec2-user/LLMOps-RAG-Chatbot/venv/bin/uvicorn app:app   --host 0.0.0.0   --port 8000   > uvicorn.log 2>&1 &
+  320  tree
+  321  docker system df -v
+  322  git status
+  323  df -h
+  324  docker rmi babujoseph5757/rag-chatbot:18
+  325  docker rmi babujoseph5757/rag-chatbot-frontend:17
+  326  docker builder prune -a -f
+  327  kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
+  328  docker container prune -f
+  329  docker image prune -f
+  330  docker builder prune -a -f
+  331  df -h
+  332  cd LLMOps-RAG-Chatbot/
+  333  curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
+  334    "question":"What is Kubernetes?"
+  335  }'
+  336  kubectl exec -it deployment/rag-chatbot -- python -c "
+  337  from rag_pipeline import get_answer
+  338  result = get_answer('What is Kubernetes?')
+  339  print(result)
+  340  "
+  341  kubectl get pods
+  342  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  343  kubectl exec -it $POD -- ls -R /app/chroma_db
+  344  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  345  kubectl exec -it $POD -- python -c "
+  346  from chromadb import PersistentClient
+  347  client = PersistentClient(path='chroma_db')
+  348  collection = client.get_collection('langchain')
+  349  print('Count:', collection.count())
+  350  "
+  351  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  352  kubectl exec -it $POD -- python -c "
+  353  from langchain_chroma import Chroma
+  354  from langchain_huggingface import HuggingFaceEmbeddings
+  355  db = Chroma(
+  356      collection_name='langchain',
+  357      persist_directory='chroma_db',
+  358      embedding_function=HuggingFaceEmbeddings(
+  359          model_name='sentence-transformers/all-MiniLM-L6-v2'
+  360      )
+  361  )
+  362  docs = db.similarity_search(
+  363      'What is Kubernetes?',
+  364  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  365  kubectl exec -it $POD -- python -c "
+  366  from langchain_chroma import Chroma
+  367  from langchain_huggingface import HuggingFaceEmbeddings
+  368  db = Chroma(
+  369      collection_name='langchain',
+  370      persist_directory='chroma_db',
+  371      embedding_function=HuggingFaceEmbeddings(
+  372          model_name='sentence-transformers/all-MiniLM-L6-v2'
+  373      )
+  374  )
+  375  docs = db.similarity_search(
+  376      'What is Kubernetes?',
+  377      k=5
+  378  )
+  379  print('Retrieved:', len(docs))
+  380  "
+  381  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  382  kubectl exec -it $POD -- python -c "
+  383  from rag_pipeline import get_answer
+  384  result = get_answer('What is Kubernetes?')
+  385  print(result)
+  386  "
+  387  cat backend/rag_pipeline.py
+  388  kubectl get deployment rag-chatbot -o yaml | grep -A20 resources
+  389  cd backend/
+  390  >rag_pipeline.py 
+  391  vi rag_pipeline.py 
+  392  git add backend/rag_pipeline.py
+  393  cd ..
+  394  git add backend/rag_pipeline.py
+  395  git commit -m "Improved RAG retrieval and prompt generation"
+  396  git push origin master
+  397  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  398  kubectl exec -it $POD -- python -c "
+  399  from chromadb import PersistentClient
+  400  client = PersistentClient(path='chroma_db')
+  401  collection = client.get_collection('langchain')
+  402  print('Count:', collection.count())
+  403  "
+  404  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  405  kubectl exec -it $POD -- python -c "
+  406  from rag_pipeline import get_answer
+  407  print(get_answer('What is Kubernetes?'))
+  408  "
+  409  curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
+  410    "question":"What is Kubernetes?"
+  411  }'
+  412  minikube status
+  413  kubectl describe pod rag-chatbot-c6c89948b-mjdd5 | grep -A15 "Last State"
+  414  kubectl describe pod $(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  415  cd ~/LLMOps-RAG-Chatbot
+  416  minikube status
+  417  sudo systemctl status jenkins
+  418  sudo su - jenkins
+  419  kubectl get pods
+  420  kubectl get deployment
+  421  kubectl get svc
+  422  kubectl exec -it deployment/rag-chatbot -- find /app/chroma_db -type f
+  423  tree
+  424  ls -lart
+  425  cd backend/
+  426  ls -lart
+  427  vi rag_pipeline.py 
+  428  git status
+  429  docker build -t babujoseph5757/rag-chatbot:22 ./backend
+  430  cd ..
+  431  docker build -t babujoseph5757/rag-chatbot:22 ./backend
+  432  docker push babujoseph5757/rag-chatbot:22
+  433  kubectl set image deployment/rag-chatbot rag-chatbot=babujoseph5757/rag-chatbot:22
+  434  kubectl rollout status deployment/rag-chatbot
+  435  kubectl exec -it deployment/rag-chatbot -- ls -ltr /app/chroma_db
+  436  curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
+  437    "question":"What is Kubernetes?"
+  438  }'
+  439  kubectl exec -it deployment/rag-chatbot -- python -c "
+  440  from rag_pipeline import get_answer
+  441  print(get_answer('What is Kubernetes?'))
+  442  "
+  443  curl http://localhost:11434/api/tags
+  444  cd backend/
+  445  >rag_pipeline.py 
+  446  vi rag_pipeline.py 
+  447  git status add .
+  448  git add .
+  449  git commit -m "Updated Ollama endpoint for Kubernetes"
+  450  git push origin master
+  451  df -h
+  452  docker system df -v
+  453  kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
+  454  docker rmi babujoseph5757/rag-chatbot:21
+  455  docker rmi babujoseph5757/rag-chatbot-frontend:18
+  456  docker builder prune -a -f
+  457  df -h
+  458  docker rmi babujoseph5757/rag-chatbot:18
+  459  docker rmi babujoseph5757/rag-chatbot:21
+  460  docker rmi babujoseph5757/rag-chatbot-frontend:18
+  461  docker builder prune -a -f
+  462  docker image prune -f
+  463  docker container prune -f
+  464  sudo du -xh /var | sort -h | tail -30
+  465  docker rmi babujoseph5757/rag-chatbot:21
+  466  minikube ssh
+  467  kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
+  468  minikube ssh
+  469  df -f
+  470  df -h
+  471  cd ..
+  472  df -h
+  473  git status
+  474  grep "from .*rag_pipeline" backend/app.py
+  475  ls -ltr backend/chroma_db
+  476  grep "EMAIL_RECIPIENT" Jenkinsfile
+  477  python3 -m pytest tests/ -v
+  478  python3 -m pip show fastapi
+  479  python3 -m pip install --user -r backend/requirements.txt
+  480     
+  481  >Jenkinsfile 
+  482  vi Jenkinsfile 
+  483  git add .
+  484  git commit -m "Fixed backend package imports for pytest"
+  485  git push origin master
+  486  python3 -m pip show fastapi
+  487  python3 -m pytest tests/ -v
+  488  vi Jenkinsfile 
+  489  df -h
+  490  kubectl exec -it deployment/rag-chatbot -- curl http://host.minikube.internal:11434/api/tags
+  491  kubectl exec -it deployment/rag-chatbot -- python -c "
+  492  import requests
+  493  print(requests.get('http://host.minikube.internal:11434/api/tags').status_code)
+  494  "
+  495  kubectl exec -it deployment/rag-chatbot -- python -c "
+  496  import requests
+  497  print(requests.get('http://host.minikube.internal:11434/api/tags').text)
+  498  "
+  499  kubectl exec -it deployment/rag-chatbot -- python -c "
+  500  from langchain_chroma import Chroma
+  501  from langchain_huggingface import HuggingFaceEmbeddings
+  502  db = Chroma(
+  503      persist_directory='chroma_db',
+  504      embedding_function=HuggingFaceEmbeddings(
+  505          model_name='sentence-transformers/all-MiniLM-L6-v2'
+  506      )
+  507  )
+  508  print('Document Count:', db._collection.count())
+  509  "
+  510  kubectl exec -it deployment/rag-chatbot -- python -c "
+  511  from langchain_chroma import Chroma
+  512  from langchain_huggingface import HuggingFaceEmbeddings
+  513  db = Chroma(
+  514      persist_directory='chroma_db',
+  515      embedding_function=HuggingFaceEmbeddings(
+  516          model_name='sentence-transformers/all-MiniLM-L6-v2'
+  517      )
+  518  )
+  519  docs = db.similarity_search(
+  520      'What is Kubernetes?',
+  521      k=3
+  522  )
+  523  print(docs)
+  524  "
+  525  kubectl exec -it deployment/rag-chatbot -- python -c "
+  526  from langchain_chroma import Chroma
+  527  from langchain_huggingface import HuggingFaceEmbeddings
+  528  db = Chroma(
+  529      persist_directory='chroma_db',
+  530      embedding_function=HuggingFaceEmbeddings(
+  531          model_name='sentence-transformers/all-MiniLM-L6-v2'
+  532      )
+  533  )
+  534  docs = db.similarity_search(
+  535      'What is Kubernetes?',
+  536      k=3
+  537  )
+  538  print('Retrieved Docs:')
+  539  print('----------------------------------')
+  540  for d in docs:
+  541      print(d.page_content[:500])
+  542      print('----------------------------------')
+  543  "
+  544  cat src/ingestion.py
+  545  cat src/vectorstore.py
+  546  cd backend/
+  547  >rag_pipeline.py 
+  548  vi rag_pipeline.py 
+  549  cd ..
+  550  git add .
+  551  git commit -m "Improved RAG retrieval with MMR search"
+  552  git push origin master
+  553  nohup kubectl port-forward -n monitoring svc/grafana 3000:80 --address 0.0.0.0 > grafana.log 2>&1 &
+  554  nohup kubectl port-forward -n monitoring svc/prometheus-server 9090:80 --address 0.0.0.0 > prometheus.log 2>&1 &
+  555  curl http://192.168.49.2:30090/metrics | grep rag_
+  556  for i in {1..10}; do curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
+  557    "question":"What is Kubernetes?"
+  558  }'; done
+  559  kubectl exec -it deployment/rag-chatbot -- python -c "
+  560  from rag_pipeline import get_answer
+  561  result = get_answer('What is Kubernetes?')
+  562  print(result)
+  563  "
+  564  from rag_pipeline import get_answer
+  565  print(get_answer("What is Kubernetes?"))
+  566  kubectl exec -it deployment/rag-chatbot -- python -c "
+  567  from langchain_chroma import Chroma
+  568  from langchain_huggingface import HuggingFaceEmbeddings
+  569  db = Chroma(
+  570      persist_directory='chroma_db',
+  571      embedding_function=HuggingFaceEmbeddings(
+  572          model_name='sentence-transformers/all-MiniLM-L6-v2'
+  573      )
+  574  )
+  575  docs = db.max_marginal_relevance_search(
+  576      'What is Kubernetes?',
+  577      k=6,
+  578      fetch_k=20
+  579  )
+  580  print('Retrieved:', len(docs))
+  581  for d in docs:
+  582      print('--------------------')
+  583      print(d.page_content[:500])
+  584  "
+  585  kubectl exec -it deployment/rag-chatbot -- python -c "
+  586  from langchain_chroma import Chroma
+  587  from langchain_huggingface import HuggingFaceEmbeddings
+  588  db = Chroma(
+  589      persist_directory='chroma_db',
+  590      embedding_function=HuggingFaceEmbeddings(
+  591          model_name='sentence-transformers/all-MiniLM-L6-v2'
+  592      )
+  593  )
+  594  print('Collections:')
+  595  print(db._client.list_collections())
+  596  "
+  597  kubectl exec -it deployment/rag-chatbot -- python -c "
+  598  from langchain_chroma import Chroma
+  599  from langchain_huggingface import HuggingFaceEmbeddings
+  600  db = Chroma(
+  601      collection_name='langchain',
+  602      persist_directory='chroma_db',
+  603      embedding_function=HuggingFaceEmbeddings(
+  604          model_name='sentence-transformers/all-MiniLM-L6-v2'
+  605      )
+  606  )
+  607  print('Count:', db._collection.count())
+  608  "
+  609  kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
+  610  kubectl exec -it deployment/rag-chatbot -- python -c "
+  611  from chromadb import PersistentClient
+  612  client = PersistentClient(path='chroma_db')
+  613  print(client.list_collections())
+  614  "
+  615  kubectl exec -it deployment/rag-chatbot -- python -c "
+  616  from chromadb import PersistentClient
+  617  client = PersistentClient(path='chroma_db')
+  618  print(client.list_collections())
+  619  "
+  620  kubectl exec -it deployment/rag-chatbot -- python -c "
+  621  from chromadb import PersistentClient
+  622  client = PersistentClient(path='chroma_db')
+  623  collection = client.get_collection('langchain')
+  624  print('Count:', collection.count())
+  625  "
+  626  python3 -c "
+  627  from chromadb import PersistentClient
+  628  client = PersistentClient(path='backend/chroma_db')
+  629  collection = client.get_collection('langchain')
+  630  print('Host Count:', collection.count())
+  631  "
+  632  docker run --rm -it babujoseph5757/rag-chatbot:22 ls -R /app/chroma_db
+  633  vi src/ingestion.py 
+  634  git add .
+  635  git commit -m "Updated Ollama endpoint for Kubernetes"
+  636  git push origin master
+  637  vi src/ingestion.py 
+  638  cat src/ingestion.py 
+  639  python3 src/ingestion.py
+  640  git status
+  641  df -h
+  642  kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
+  643  kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
+  644  docker run --rm -it babujoseph5757/rag-chatbot:23 ls -R /app
+  645  cat .dockerignore
+  646  vi .dockerignore 
+  647  git add .
+  648  git commit -m "Include Chroma vector database in backend image"
+  649  git push origin master
+  650  kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
+  651  docker run --rm -it babujoseph5757/rag-chatbot:24 ls -R /app
+  652  docker run --rm -it babujoseph5757/rag-chatbot:24 ls -R /app/chroma_db
+  653  cd backend/
+  654  >Dockerfile 
+  655  vi Dockerfile 
+  656  ls-lart
+  657  ls -lart
+  658  docker build -t rag-test ./backend
+  659  cd ..
+  660  docker build -t rag-test ./backend
+  661  docker run --rm -it rag-test ls -R /app/chroma_db
+  662  git add .
+  663  git commit -m "Include ChromaDB vector store in backend image"
+  664  git push origin master
+  665  cd backend/
+  666  >Dockerfile 
+  667  vi Dockerfile 
+  668  cd ..
+  669  cd frontend/
+  670  >Dockerfile 
+  671  vi Dockerfile 
+  672  cd ..
+  673  vi .dockerignore 
+  674  >Jenkinsfile 
+  675  vi Jenkinsfile 
+  676  git add .
+  677  git commit -m "Packaged ChromaDB with backend image"
+  678  git push origin master
+  679  cd backend/
+  680  >Dockerfile 
+  681  vi Dockerfile 
+  682  cd ..
+  683  git add .
+  684  git add backend/Dockerfile Jenkinsfile .dockerignore
+  685  git commit -m "Packaged ChromaDB with backend image"
+  686  git push origin master
+  687  kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
+  688  docker run --rm -it rag-test ls -R /app/chroma_db
+  689  kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
+  690  kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
+  691  kubectl describe deployment rag-chatbot | grep Image
+  692  docker pull babujoseph5757/rag-chatbot:28
+  693  docker run --rm -it babujoseph5757/rag-chatbot:28 ls -R /app
+  694  git ls-files | grep chroma_db
+  695  git check-ignore -v backend/chroma_db/chroma.sqlite3
+  696  ls -lart
+  697  vi .gitignore 
+  698  git add .
+  699  git commit -m "Added Chroma vector database to backend image"
+  700  git push origin master
+  701  ls -larty
+  702  ls -lart
+  703  cd backend/
+  704  ls -lart
+  705  cd ..
+  706  kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
+  707  kubectl exec -it deployment/rag-chatbot -- python -c "
+  708  from chromadb import PersistentClient
+  709  client = PersistentClient(path='chroma_db')
+  710  collection = client.get_collection('langchain')
+  711  print('Count:', collection.count())
+  712  "
+  713  kubectl exec -it deployment/rag-chatbot -- python -c "
+  714  from langchain_chroma import Chroma
+  715  from langchain_huggingface import HuggingFaceEmbeddings
+  716  db = Chroma(
+  717      collection_name='langchain',
+  718      persist_directory='chroma_db',
+  719      embedding_function=HuggingFaceEmbeddings(
+  720          model_name='sentence-transformers/all-MiniLM-L6-v2'
+  721      )
+  722  )
+  723  docs = db.similarity_search(
+  724      'What is Kubernetes?',
+  725      k=5
+  726  )
+  727  print('Retrieved:', len(docs))
+  728  for d in docs:
+  729      print('---------------------')
+  730      print(d.page_content[:500])
+  731  "
+  732  curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
+  733    "question":"What is Kubernetes?"
+  734  }'
+  735  cd LLMOps-RAG-Chatbot/
+  736  minikube ssh
+  737  minikube start --driver=docker
+  738  df -h
+  739  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  740  kubectl exec -it $POD -- python -c "
+  741  import requests
+  742  r = requests.post(
+  743      'http://host.minikube.internal:11434/api/generate',
+  744      json={
+  745          'model':'llama3',
+  746          'prompt':'What is Kubernetes?',
+  747          'stream':False
+  748      },
+  749      timeout=120
+  750  )
+  751  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  752  kubectl exec -it $POD -- python -c "
+  753  import requests
+  754  r = requests.post(
+  755      'http://host.minikube.internal:11434/api/generate',
+  756      json={
+  757          'model':'llama3',
+  758          'prompt':'What is Kubernetes?',
+  759          'stream':False
+  760      },
+  761      timeout=120
+  762  )
+  763  print(r.status_code)
+  764  print(r.text[:1000])
+  765  "
+  766  time curl http://localhost:11434/api/generate -d '{
+  767    "model":"llama3",
+  768    "prompt":"What is Kubernetes?",
+  769    "stream":false
+  770  }'
+  771  cd backend/
+  772  >rag_pipeline.py 
+  773  vi rag_pipeline.py 
+  774  cd ..
+  775  git add .
+  776  git commit -m "Optimized RAG retrieval and prompt size"
+  777  git push origin master
+  778  minikube ssh
+  779  df -h
+  780  curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
+  781    "question":"What is Kubernetes?"
+  782  }'
+  783  kubectl logs deployment/rag-chatbot -f
+  784  ollama ps
+  785  ollama list
+  786  time curl http://localhost:11434/api/generate -d '{
+  787    "model":"llama3",
+  788    "prompt":"What is Kubernetes?",
+  789    "stream":false
+  790  }'
+  791  cd ..
+  792  time curl http://localhost:11434/api/generate -d '{
+  793    "model":"llama3",
+  794    "prompt":"What is Kubernetes?",
+  795    "stream":false
+  796  }'
+  797  cd LLMOps-RAG-Chatbot/
+  798  sudo journalctl -u jenkins -n 200
+  799  sudo systemctl status jenkins
+  800  cat ~/.bash_history > all_commands.txt
+  801  vi all_commands.txt 
+  802  cd LLMOps-RAG-Chatbot/
+  803  git status
+  804  cat ~/.bash_history > all_commands.txt
+  805  git status
+  806  git add .
+  807  git commit -m "aading all used commands in LLM Project"
+  808  git push origin master
+  809  cd ..
+  810  cd House-Price-Predictor-Mlops/
+  811  cat ~/.bash_history > all_commands.txt
+  812  git add .
+  813  git commit -m "aading all used commands in LLM Project"
+  814  git push origin master
+  815  minikube start --driver=docker
+  816  minikube status
+  817  cd ..
+  818  cd LLMOps-RAG-Chatbot/
+  819  minikube status
+  820  minikube ssh
+  821  df -h
+  822  kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
+  823  ssh-keygen -R ec2-13-211-134-144.ap-southeast-2.compute.amazonaws.com
+  824  vi ~/.ssh/known_hosts
+  825  rm -f ~/.ssh/known_hosts
+  826  cd LLMOps-RAG-Chatbot/
+  827  sudo su - jenkins
+  828  ls -la ~/.ssh
+  829  rm -f ~/.ssh/known_hosts.old
+  830  ssh -T git@github.com
+  831  ls -la ~/.ssh
+  832  rm -f ~/.ssh/known_hosts.old
+  833  ls -la ~/.ssh
+  834  cat ~/.ssh/known_hosts
+  835  minikube ssh
+  836  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  837  kubectl logs $POD -f
+  838  cd LLMOps-RAG-Chatbot/
+  839  curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{"question":"What is Kubernetes?"}'
+  840  for i in {1..10}; do curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{"question":"What is Kubernetes?"}'; done
+  841  cd LLMOps-RAG-Chatbot/
+  842  sudo su - jenkins
+  843  clear
+  844  minikube start --driver=docker
+  845  sudo systemctl status jenkins
+  846  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  847  curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
+  848    "question":"Explain Kubernetes Pods"
+  849  }'
+  850  cd LLMOps-RAG-Chatbot/
+  851  sudo su - jenkins
+  852  df -h
+  853  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  854  nohup kubectl port-forward -n monitoring svc/grafana 3000:80 --address 0.0.0.0 > grafana.log 2>&1 &
+  855  docker run -d   --name sonarqube   -p 9000:9000   sonarqube:lts-community
+  856  docker logs sonarqube | grep Version
+  857  cd LLMOps-RAG-Chatbot/
+  858  ls -lart
+  859  vi sonar-project.properties
+  860  git add .
+  861  git commit -m "Added SonarQube configuration"
+  862  git push origin master
+  863  cd ..
+  864  cd House-Price-Predictor-Mlops/
+  865  vi sonar-project.properties
+  866  git add .
+  867  git commit -m "Added SonarQube configuration"
+  868  git push origin master
+  869  >Jenkinsfile 
+  870  vi Jenkinsfile 
+  871  git add .
+  872  git commit -m "Added SonarQube configuration"
+  873  git push origin master
+  874  cd ..
+  875  cd LLMOps-RAG-Chatbot/
+  876  >Jenkinsfile 
+  877  vi Jenkinsfile 
+  878  git add .
+  879  git commit -m "Added SonarQube configuration"
+  880  git push origin master
+  881  cd LLMOps-RAG-Chatbot/
+  882  minikube start --driver=docker
+  883  kubectl get pods
+  884  kubectl top pods
+  885  sudo su - jenkins
+  886  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  887  kubectl describe pod $POD | grep -A20 "Last State"
+  888  kubectl top pods -w
+  889  kubectl top pods -wide
+  890  kubectl top pods
+  891  kubectl top node
+  892  minikube ssh free -h
+  893  minikube ssh
+  894  cd backend/
+  895  vi rag_pipeline.py 
+  896  minikube ssh
+  897  cd ..
+  898  git add .
+  899  git commit -m "Improved RAG retrieval and deployment configuration"
+  900  git push origin master
+  901  nohup kubectl port-forward -n monitoring svc/grafana 3000:80 --address 0.0.0.0 > grafana.log 2>&1 &
+  902  nohup kubectl port-forward -n monitoring svc/prometheus-server 9090:80 --address 0.0.0.0 > prometheus.log 2>&1 &
+  903  kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
+  904  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  905  kubectl exec -it $POD -- grep "model=" /app/rag_pipeline.py
+  906  pip install dvc
+  907  pip install --user "prompt-toolkit<3.0.52"
+  908  docker start sonarqube
+  909  docker stop sonarqube
+  910  docker rm sonarqube
+  911  docker run -d   --name sonarqube   -p 9000:9000   sonarqube:lts-community
+  912  docker ps | grep sonarqube
+  913  >Jenkinsfile 
+  914  vi Jenkinsfile 
+  915  git add .
+  916  git commit -m "Improved RAG retrieval and deployment configuration"
+  917  git push origin master
+  918  cd LLMOps-RAG-Chatbot/
+  919  ls -lart
+  920  curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{"question":"What is Kubernetes?"}'
+  921  for i in {1..20}; do curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{"question":"What is Kubernetes?"}'; done
+  922  cd LLMOps-RAG-Chatbot/
+  923  minikube start --driver=docker
+  924  docker ps | grep sonarqube
+  925  docker start sonarqube
+  926  docker ps | grep sonarqube
+  927  docker exec -it sonarqube bash
+  928  cd LLMOps-RAG-Chatbot/
+  929  docker ps | grep sonarqube
+  930  sudo systemctl status jenkins
+  931  docker stop sonarqube
+  932  docker rm sonarqube
+  933  docker run -d   --name sonarqube   -p 9000:9000   sonarqube:lts-community
+  934  docker logs -f sonarqube
+  935  docker ps | grep sonarqube
+  936  kubectl get pods
+  937  ls -lart
+  938  vi sonar-project.properties 
+  939  git add .
+  940  git commit -m "sonar project properties"
+  941  git push origin master
+  942  vi Jenkinsfile 
+  943  curl -u sqp_9353d4aceeefaaaa17258ad45158cef1a21317cf: http://13.211.36.209:9000/api/authentication/validate
+  944  vi Jenkinsfile 
+  945  ls -lart
+  946  vi Jenkinsfile 
+  947  cd LLMOps-RAG-Chatbot/
+  948  sudo su - jenkins
+  949  minikube status
+  950  docker ps | grep sonarqube
+  951  vi Jenkinsfile 
+  952  >Jenkinsfile 
+  953  vi Jenkinsfile 
+  954  vi sonar-project.properties 
+  955  git add .
+  956  git commit -m "Updated Jenkinsfile with Trivy disk-space fix"
+  957  git push origin master
+  958  curl -u sqp_9353d4aceeefaaaa17258ad45158cef1a21317cf: "http://13.211.36.209:9000/api/users/current"
+  959  curl -u sqp_9353d4aceeefaaaa17258ad45158cef1a21317cf: "http://13.211.36.209:9000/api/permissions/users?projectKey=rag-chatbot"
+  960  vi sonar-project.properties 
+  961  vi Jenkinsfile 
+  962  git add .
+  963  git commit -m "Fixed So*arQube project key"
+  964  git push origin master
+  965  cd ..
+  966  cd House-Price-Predictor-Mlops/
+  967  ls -lart
+  968  vi sonar-project.properties 
+  969  git add .
+  970  git commit -m "Fixed So*arQube project key"
+  971  git push origin master
+  972  cd ..
+  973  cd LLMOps-RAG-Chatbot/
+  974  cd ..
+  975  cd House-Price-Predictor-Mlops/
+  976  pip install dvc
+  977  git init
+  978  dvc init
+  979  git add .dvc
+  980  git commit -m "Initialize DVC"
+  981  dvc add data/raw.csv
+  982  cd ..
+  983  cd LLMOps-RAG-Chatbot/
+  984  sudo su - jenkins
+  985  df -h
+  986  minikube ssh
+  987  kubectl get pods -l app=rag-chatbot -o wide
+  988  kubectl describe pod -l app=rag-chatbot
+  989  kubectl rollout status deployment/rag-chatbot --timeout=900s
+  990  vi Jenkinsfile 
+  991  git add .
+  992  git commit -m "Increase Kubernetes rollout timeout"
+  993  git push origin master
+  994  df -h
+  995  docker builder prune -a -f
+  996  docker image prune -f
+  997  docker container prune -f
+  998  docker system df
+  999  docker images
+ 1000   
+ 1001  docker rmi babujoseph5757/rag-chatbot:30
+ 1002  docker rmi babujoseph5757/rag-chatbot:31
+ 1003  docker rmi babujoseph5757/rag-chatbot:32
+ 1004  docker rmi babujoseph5757/rag-chatbot:33
+ 1005  docker rmi babujoseph5757/rag-chatbot-frontend:30
+ 1006  docker rmi babujoseph5757/rag-chatbot-frontend:31
+ 1007  docker rmi babujoseph5757/rag-chatbot-frontend:32
+ 1008  docker rmi babujoseph5757/rag-chatbot-frontend:33
+ 1009  docker builder prune -a -f
+ 1010  clear
+ 1011  df -h
+ 1012  git status
+ 1013  df -h
+ 1014  minikube ssh
+ 1015  df -h
+ 1016  pwd
+ 1017  cd ..
+ 1018  cd House-Price-Predictor-Mlops/
+ 1019  ls -lart
+ 1020  minikube ssh
+ 1021  cd ..
+ 1022  cd LLMOps-RAG-Chatbot/
+ 1023  cd ..
+ 1024  cd House-Price-Predictor-Mlops/
+ 1025  docker images
+ 1026  cd ..
+ 1027  cd LLMOps-RAG-Chatbot/
+ 1028  df -h
+ 1029  kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
+ 1030  minikube ssh
+ 1031  docker images
+ 1032  docker rmi babujoseph5757/rag-chatbot:51
+ 1033  docker rmi babujoseph5757/rag-chatbot-frontend:51
+ 1034  docker rmi rag-test:latest
+ 1035  docker builder prune -f
+ 1036  df -h
+ 1037  cd ..
+ 1038  cd House-Price-Predictor-Mlops/
+ 1039  git add .dvc .dvcignore
+ 1040  git commit -m "Initialize DVC"
+ 1041  dvc add data/housing.csv
+ 1042  git rm --cached data/housing.csv
+ 1043  ls -ltr data/housing.csv
+ 1044  git commit -m "Stop tracking housing dataset with Git"
+ 1045  dvc add data/housing.csv
+ 1046  git add data/housing.csv.dvc .gitignore
+ 1047  git commit -m "Track housing dataset with DVC"
+ 1048  git status
+ 1049  dvc status
+ 1050  git add .
+ 1051  git add data/housing.csv.dvc .gitignore
+ 1052  ls -lart
+ 1053  git commit -m "Track housing dataset with DVC"
+ 1054  find . -type f | grep -E "csv|pkl|joblib|model|artifacts"
+ 1055  tree
+ 1056  find . -type f | grep -E "csv|pkl|joblib|model|artifacts"
+ 1057  python3 -m venv venv
+ 1058  source venv/bin/activate
+ 1059  find . -path "./venv" -prune -o -type f \( -name "*.csv" -o -name "*.pkl" -o -name "*.joblib" \) -print
+ 1060  git rm --cached data/housing.csv
+ 1061  git status
+ 1062  git status --ignored data/housing.csv
+ 1063  dvc add data/housing.csv
+ 1064  git ls-files data/housing.csv
+ 1065  dvc add data/housing.csv
+ 1066  dvc add artifacts/train.csv
+ 1067  git check-ignore -v artifacts/train.csv.dvc
+ 1068  git add .gitignore
+ 1069  git commit -m "Allow DVC metadata files under artifacts"
+ 1070  git add .
+ 1071  git commit -m "Allow DVC metadata files under artifacts"
+ 1072  dvc add artifacts/train.csv
+ 1073  git check-ignore -v artifacts/train.csv.dvc
+ 1074  vi vi .gitignore
+ 1075  vi .gitignore
+ 1076  git rm -* --cached artifacts
+ 1077  git rm -r --cached artifacts
+ 1078  cat .gitignore
+ 1079  grep -n "artifacts" .gitignore
+ 1080  vi .git
+ 1081  vi .gitignore 
+ 1082  git check*ignore -v artifacts/train.csv.dvc
+ 1083  *
+ 1084  dvc add artifacts/train.csv
+ 1085  dvc*add artifacts/test.csv
+ 1086  dvc add artifacts/test.csv
+ 1087  dvc add ar*ifacts/preprocessor.pkl
+ 1088  dvc add a*tifacts/model.pkl
+ 1089  git status
+ 1090  git add .
+ 1091  git commit -m "Ad*ed DVC tracking for datasets and m*del artifacts"
+ 1092  dvc status
+ 1093  aws s3 mb s3://house-price-dvc-store
+ 1094  dvc remote add -d s3remote s3://house-price-dvc-store
+ 1095  dvc remote list
+ 1096  dvc push
+ 1097  pip install dvc-s3
+ 1098  pip install --upgrade botocore
+ 1099  pip install "botocore>=1.42.97,<1.43.0"
+ 1100  aws --version
+ 1101  aws sts get-caller-identity
+ 1102  dvc push
+ 1103  pip install dvc-s3
+ 1104  pip install "botocore>=1.42.97,<1.43.0"
+ 1105  dvc doctor
+ 1106  python -c "import dvc_s3; print('dvc-s3 OK')"
+ 1107  which dvc
+ 1108  which python
+ 1109  which pip
+ 1110  pip show dvc
+ 1111  pip show dvc-s3
+ 1112  python -c "
+import dvc
+import dvc_s3
+
+print('DVC:', dvc.__file__)
+print('DVC-S3:', dvc_s3.__file__)
 "
-git add .
-git commit -m "Deploy RAG chatbot to Kubernetes with Ollama integration"
-git push origin master
-git tag -a v1.0.0 -m "Production-ready Kubernetes RAG chatbot"
-git push origin v1.0.0
-kubectl get pods
-mkdir -p ~/.kube
-cp ~/.kube/config ~/.kube/config
-sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-sudo systemctl status jenkins
-sudo systemctl show jenkins | grep JENKINS_HOME
-[ec2-user@ip-172-31-10-238 LLMOps-RAG-Chatbot]$ sudo systemctl show jenkins | grep JENKINS_HOME
-Environment=JENKINS_HOME=/var/lib/jenkins JENKINS_WEBROOT=/var/cache/jenkins/war JAVA_OPTS=-Djava.awt.headless=true JENKINS_PORT=8080
-sudo ls -l /var/lib/jenkins/secrets/
-sudo find /var/lib/jenkins -name initialAdminPassword
-sudo cat /var/lib/jenkins/users/users.xml
-sudo ls -lah /var/lib/jenkins
-sudo su - jenkins
-sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-sudo ls -lah /var/lib/jenkins/users
-docker ps
-kubectl get pods
-git --version
-trivy --version
-cd ~/LLMOps-RAG-Chatbot
-minikube start --driver=docker
-kubectl get pods
-sudo su - jenkins
-mkdir -p ~/.ssh
-ssh-keyscan github.com >> ~/.ssh/known_hosts
-chmod 755 ~/.ssh/known_hosts
-cat ~/.ssh/known_hosts
-ssh-keygen -t ed25519 -C "jenkins@rag-chatbot"
-ls -la ~/.ssh
-cat ~/.ssh/id_ed25519.pub
-ssh -T git@github.com
-cat ~/.ssh/id_ed25519
-vi Jenkinsfile 
-cd ~/LLMOps-RAG-Chatbot
-source venv/bin/activate
-docker container prune -f
-docker image prune -a -f
-docker volume prune -f
-docker builder prune -a -f
-docker system df
-docker volume prune -f
-vi Dockerfile 
-ls -lart
-vi .dockerignore 
-git add .
-git commit -m "Fix pytest execution in Jenkins"
-git push origin master
-minikube volume
-docker volume inspect minikube
-docker exec -it minikube df -h
-minikube ssh
-minikube delete
-docker volume rm minikube
-docker system df
-minikube start   --driver=docker   --cpus=2   --memory=6144
-kubectl get pods
-sudo su - jenkins
-df -h
-cd ~/LLMOps-RAG-Chatbot
-minikube status
-vi Jenkinsfile 
-git add .
-git commit -m "Updated CI/CD Pipeline"
-git push origin master
-cat ~/.ssh/known_hosts
-ssh-keyscan github.com >> ~/.ssh/known_hosts
-cat ~/.ssh/known_hosts
-ls -l ~/.ssh/known_hosts
-sudo ls -l /var/lib/jenkins/.ssh/known_hosts
-ls -l  /home/ec2-user/.ssh/known_hosts
-ls -lart
-cd .ssh
-sudo su - jenkins
-mkdir -p ~/.ssh
-ssh-keyscan github.com >> ~/.ssh/known_hosts
-chmod 600 ~/.ssh/known_hosts
-cat ~/.ssh/known_hosts
-sudo mv /var/lib/jenkins/.ssh /var/lib/jenkins/.ssh_backup_$(date +%Y%m%d)
-df -h
-sudo du -xh /var/lib/jenkins | sort -h | tail -20
-sudo rm -rf /var/lib/jenkins/workspace/*
-sudo rm -rf /var/lib/jenkins/.cache/pip
-sudo rm -rf /var/lib/jenkins/.cache/trivy
-sudo du -sh /var/lib/jenkins/.cache
-df -h
-vi Jenkinsfile 
-git add .
-git commit -m "Updated CI/CD Pipeline"
-git push origin master
-python3 -m pytest tests/
-vi Jenkinsfile 
->Jenkinsfile 
-vi Jenkinsfile 
-vi requirements.txt 
-cat requirements.txt 
-sudo su - jenkins
-python3 -m pip show pytest
-python3 -m pip install --user pytest
-python3 -m pytest --version
->Jenkinsfile 
-vi Jenkinsfile 
-git add .
-git commit -m "Fix pytest execution in Jenkins"
-git push origin master
-ls -lart
-rm -rf ]
-git add .
-git commit -m "Fix pytest execution in Jenkins"
-git push origin master
-cd ~/LLMOps-RAG-Chatbot
-sudo su - jenkins
-minikube status
-minikube start   --driver=docker   --cpus=2   --memory=6144
-kubectl get pods
-minikube status
-df -h
-git status
-df -h
->Jenkinsfile 
-vi Jenkinsfile 
-git add .
-git commit -m "Updated Jenkinsfile with Trivy disk-space fix"
-git push origin master
-df -h
-kubectl get deployment
-kubectl get pods -A | grep rag
-kubectl apply -f deployment.yaml
-kubectl get deployment
-kubectl get pods
-kubectl get svc
-kubectl describe pod rag-chatbot-6f9c58cd6d-kpqts
-kubectl get pods -w
-kubectl apply -f service.yaml
-kubectl get svc
-minikube ip
-curl http://192.168.49.2:30090/health
->Jenkinsfile 
-vi Jenkinsfile 
-git add .
-git commit -m "Updated Jenkins pipeline"
-git push origin master
-df -h
-pip install streamlit requests
-pip install python-dateutil==2.9.0
-mkdir -p frontend
-cd frontend/
-vi streamlit_app.py
-cd ..
-streamlit run streamlit_app.py --server.port 8501
-cd frontend/
-streamlit run streamlit_app.py --server.port 8501
-git status
-cd ~/LLMOps-RAG-Chatbot
-minikube start   --driver=docker   --cpus=2   --memory=6144
->deployment.yaml 
-vi deployment.yaml 
->service.yaml 
-vi service.yaml 
->Jenkinsfile 
-vi Jenkinsfile 
-cd frontend/
-ls -lart
-vi Dockerfile
-cd ..
-sudo systemctl status jenkins
-cd frontend/
-vi vi streamlit_app.py
-ls -lart
-vi streamlit_app.py
-ls -lart
-cd ..
-vi requirements.txt 
-cd frontend/
-vi Dockerfile 
-vi requirements.txt
-pip install streamlit requests
-nohup streamlit run streamlit_app.py   --server.port 8501   --server.address 0.0.0.0   > streamlit.log 2>&1 &
-docker build -t babujoseph5757/rag-chatbot-frontend:v1 .
->Dockerfile 
-vi Dockerfile 
-docker build -t babujoseph5757/rag-chatbot-frontend:v1 .
-docker push babujoseph5757/rag-chatbot-frontend:v1
-vi frontend-deployment.yaml
-vi frontend-service.yaml
-ls -lart
-rm -rf frontend-deployment.yaml 
-cd ..
-vi deployment.yaml 
->deployment.yaml 
-vi deployment.yaml 
->service.yaml 
-vi service.yaml 
-kubectl apply -f deployment.yaml
-kubectl apply -f service.yaml
-kubectl get deployment
-kubectl get pods
-docker pull babujoseph5757/rag-chatbot-frontend:v1
-kubectl get pods
-mkdir backend
-ls -lart
-pwd
- cp -R Dockerfile app.py requirements.txt /home/ec2-user/LLMOps-RAG-Chatbot/backend/
-rm -rf Dockerfile app.py requirements.txt 
-kubectl describe pod rag-chatbot-frontend-644664bf5f-txzvv
-docker tag babujoseph5757/rag-chatbot-frontend:v1 babujoseph5757/rag-chatbot-frontend:latest
-docker push babujoseph5757/rag-chatbot-frontend:latest
-docker pull babujoseph5757/rag-chatbot-frontend:latest
-kubectl get pods
-kubectl rollout restart deployment rag-chatbot-frontend
-kubectl get pods
-kubectl describe deployment rag-chatbot-frontend | grep Image
-docker tag babujoseph5757/rag-chatbot-frontend:v1 babujoseph5757/rag-chatbot-frontend:latest
-docker push babujoseph5757/rag-chatbot-frontend:latest
-docker pull babujoseph5757/rag-chatbot-frontend:latest
-kubectl rollout restart deployment rag-chatbot-frontend
-kubectl get pods
-kubectl get svc
-kubectl logs deployment/rag-chatbot-frontend -f
-kubectl logs deployment/rag-chatbot-frontend
-kubectl get svc
-Type         : Custom TCP
-Port Range   : 30091
-Source       : 0.0.0.0/0
-Description  : RAG Chatbot Streamlit Frontend
-kubectl describe svc rag-chatbot-frontend-service
-curl http://192.168.49.2:30091
-minikube service rag-chatbot-frontend-service --url
-curl http://192.168.49.2:30091
-minikube service rag-chatbot-frontend-service --url
-kubectl port-forward svc/rag-chatbot-frontend-service 8501:8501 --address 0.0.0.0
-kubectl port-forward svc/rag-chatbot-frontend-service 8502:8501 --address 0.0.0.0
-curl http://$(minikube ip):30090/health
-vi Jenkinsfile 
->Jenkinsfile 
-vi Jenkinsfile 
-cd backend/
->app.py 
-vi app.py 
-ls -lart
-cd ..
-pwd
-ls -lart
-cd backend/
-vi rag_pipeline.py
->app.py 
-vi app.py 
-ls -lart
-cd src
-cd ..
-cd src/
-ls -lart
-cd ..
-cd backend/
-docker build -t babujoseph5757/rag-chatbot:v13 .
-docker push babujoseph5757/rag-chatbot:v13
-kubectl set image deployment/rag-chatbot rag-chatbot=babujoseph5757/rag-chatbot:v13
-cd ..
-git status
-git add .
-git commit -m "Enhanced RAG backend, frontend and CI/CD pipeline"
-git push origin master
-cd ~/LLMOps-RAG-Chatbot
-minikube start   --driver=docker   --cpus=2   --memory=6144
-sudo su - jenkins
-sudo systemctl status jenkins
-nohup streamlit run streamlit_app.py   --server.port 8501   --server.address 0.0.0.0   > streamlit.log 2>&1 &
-df -h
-tree
-chmod -R 755 frontend/
-chmod -R 755 Jenkinsfile 
-tree
-pkill -f uvicorn
-chmod -R 755 backend/
-tree
-cd frontend/
-ls -lart
-vi Dockerfile 
-ls -lart
-cd ..
-tree
-ls -lart
-vi .dockerignore 
-ls -lart
->Jenkinsfile 
-vi Jenkinsfile 
-git add .
-git commit -m "Updated CI/CD Pipeline"
-git push origin master
-tree
-cd tests/
->test_app.py 
-vi test_app.py 
-cd ..
->Jenkinsfile 
-vi Jenkinsfile 
-git add .
-git commit -m "Fixed pytest import and updated CI/CD pipeline"
-git push origin master
-docker system df
-docker system df -v
-docker rmi babujoseph5757/rag-chatbot:10
-docker rmi babujoseph5757/rag-chatbot:11
-docker rmi babujoseph5757/rag-chatbot:12
-docker builder prune -a -f
-docker system df -v
-df -h
-docker image prune -f
-git status
-cd backend/
-touch backend/__init__.py
-cd ..
-touch backend/__init__.py
-vi tests/test_app.py 
-vi backend/app.py 
-tree
-git add .
-git commit -m "Fixed backend package imports for pytest"
-git push origin master
-vi frontend/Dockerfile 
-git add .
-git commit -m "Fixed backend package imports for pytest"
-git push origin master
-vi deployment.yaml 
-minikube status
-cd ~/LLMOps-RAG-Chatbot
-sudo su - jenkins
-nohup /home/ec2-user/LLMOps-RAG-Chatbot/venv/bin/uvicorn app:app   --host 0.0.0.0   --port 8000   > uvicorn.log 2>&1 &
-nohup streamlit run streamlit_app.py   --server.port 8501   --server.address 0.0.0.0   > streamlit.log 2>&1 &
->Jenkinsfile 
-vi Jenkinsfile 
->Jenkinsfile 
-vi Jenkinsfile 
-git add .
-git commit -m "Updated Trivy timeout and scanner configuration"
-git push origin master
-df -h
-cd ..
-cd House-Price-Predictor-Mlops/
-ls -lart
->Jenkinsfile 
-vi Jenkinsfile 
-git add .
-git commit -m "Updated CI/CD Pipeline"
-git push origin master
-df -h
-cd ~/LLMOps-RAG-Chatbot
-minikube start   --driver=docker   --cpus=2   --memory=6144
-sudo systemctl status jenkins
-df -h
-docker system df -v
-docker rmi babujoseph5757/rag-chatbot:16
-docker rmi babujoseph5757/rag-chatbot:17
-docker rmi babujoseph5757/rag-chatbot:v13
-docker rmi babujoseph5757/rag-chatbot-frontend:v1
-df -h
-docker builder prune -a -f
-df -h
-docker image prune -f
-\
-docker container prune -f
-kubectl describe deployment rag-chatbot | grep Image
-kubectl get pods
-kubectl get deployment
-kubectl get svc
-kubectl describe pod rag-chatbot-c6d44ddb6-gstjz
-cd backend/
-ls -lart
->app.py 
-vi app.py 
->Dockerfile 
-vi Dockerfile 
-cd ..
-tree
-kubectl logs rag-chatbot-c6d44ddb6-gstjz --previous
-cd backend/
-vi app.py 
->app.py 
-vi app.py 
-cd ..
-vi Jenkinsfile 
->Jenkinsfile 
-vi Jenkinsfile 
-git add .
-git add backend/app.py
-git commit -m "Fixed rag_pipeline import"
-git push origin main
-git commit -m "Fixed rag_pipeline import"
-git status
-git push origin master
-vi Jenkinsfile 
->Jenkinsfile 
-vi Jenkinsfile 
-git add .
-git commit -m "Fixed email notification syntax"
-git push origin master
-vi backend/app.py 
-cd backend/
->app.py 
-vi app.py 
-cd ..
-vi Jenkinsfile 
->Jenkinsfile 
-vi Jenkinsfile 
-git add .
-git commit -m "Fixed rag_pipeline import for pytest and Docker"
-git push origin master
-df -h
-kubectl get pods -n monitoring
-kubectl get nodes
-kubectl create namespace monitoring
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo add grafana https://grafana.github.io/helm-charts
-helm repo update
-nohup kubectl port-forward -n monitoring svc/grafana 3000:80 --address 0.0.0.0 > grafana-portforward.log 2>&1
-helm install prometheus prometheus-community/prometheus -n monitoring
-kubectl get pods -n monitoring
-minikube addons enable metrics-server
-kubectl top nodes
-helm install grafana grafana/grafana -n monitoring
-kubectl top nodes
-nohup kubectl port-forward -n monitoring svc/grafana 3000:80 --address 0.0.0.0 > grafana-portforward.log 2>&1
-minikube addons enable metrics-server
-kubectl get apiservices | grep metrics
-kubectl logs -n kube-system deployment/metrics-server
-kubectl get apiservices | grep metrics
-kubectl get pods -n kube-system | grep metrics
-kubectl top nodes
-kubectl describe apiservice v1beta1.metrics.k8s.io
-nohup kubectl port-forward -n monitoring svc/grafana 3000:80 --address 0.0.0.0 > grafana.log 2>&1 &
-nohup kubectl port-forward -n monitoring svc/prometheus-server 9090:80 --address 0.0.0.0 > prometheus.log 2>&1 &
-curl http://localhost:9090/-/healthy
-curl http://localhost:3000
-kubectl get secret --namespace monitoring grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
-minikube ip
-curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
-  "question":"What is Kubernetes?"
-}'
-ls -ltr chroma_db
-kubectl exec -it deployment/rag-chatbot -- ls -ltr /app
-kubectl exec -it deployment/rag-chatbot -- ls -ltr /app/chroma_db
-kubectl exec -it deployment/rag-chatbot -- find /app/chroma_db -type f
-ls -lart
-pwd
-mv chroma_db backend/
-ls -lart
-cd backend/
-ls -lart
-vi Dockerfile 
-git status
-git add .
-git commit -m "Fixed rag_pipeline import for pytest and Docker"
-git push origin master
-cd ~/LLMOps-RAG-Chatbot
-python3 -m venv venv
-source venv/bin/activate
-minikube start   --driver=docker   --cpus=2   --memory=6144
-sudo su - jenkins
-sudo systemctl status jenkins
-nohup streamlit run streamlit_app.py   --server.port 8501   --server.address 0.0.0.0   > streamlit.log 2>&1 &
-nohup /home/ec2-user/LLMOps-RAG-Chatbot/venv/bin/uvicorn app:app   --host 0.0.0.0   --port 8000   > uvicorn.log 2>&1 &
-tree
-docker system df -v
-git status
-df -h
-docker rmi babujoseph5757/rag-chatbot:18
-docker rmi babujoseph5757/rag-chatbot-frontend:17
-docker builder prune -a -f
-kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
-docker container prune -f
-docker image prune -f
-docker builder prune -a -f
-df -h
-cd LLMOps-RAG-Chatbot/
-curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
-  "question":"What is Kubernetes?"
-}'
-kubectl exec -it deployment/rag-chatbot -- python -c "
-from rag_pipeline import get_answer
-
-result = get_answer('What is Kubernetes?')
-
-print(result)
-"
-kubectl get pods
-POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -it $POD -- ls -R /app/chroma_db
-POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -it $POD -- python -c "
-from chromadb import PersistentClient
-
-client = PersistentClient(path='chroma_db')
-
-collection = client.get_collection('langchain')
-
-print('Count:', collection.count())
-"
-POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -it $POD -- python -c "
-from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
-
-db = Chroma(
-    collection_name='langchain',
-    persist_directory='chroma_db',
-    embedding_function=HuggingFaceEmbeddings(
-        model_name='sentence-transformers/all-MiniLM-L6-v2'
-    )
-)
-
-docs = db.similarity_search(
-    'What is Kubernetes?',
-
-POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -it $POD -- python -c "
-from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
-
-db = Chroma(
-    collection_name='langchain',
-    persist_directory='chroma_db',
-    embedding_function=HuggingFaceEmbeddings(
-        model_name='sentence-transformers/all-MiniLM-L6-v2'
-    )
-)
-
-docs = db.similarity_search(
-    'What is Kubernetes?',
-    k=5
-)
-
-print('Retrieved:', len(docs))
-"
-POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -it $POD -- python -c "
-from rag_pipeline import get_answer
-
-result = get_answer('What is Kubernetes?')
-
-print(result)
-"
-cat backend/rag_pipeline.py
-kubectl get deployment rag-chatbot -o yaml | grep -A20 resources
-cd backend/
->rag_pipeline.py 
-vi rag_pipeline.py 
-git add backend/rag_pipeline.py
-cd ..
-git add backend/rag_pipeline.py
-git commit -m "Improved RAG retrieval and prompt generation"
-git push origin master
-POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -it $POD -- python -c "
-from chromadb import PersistentClient
-
-client = PersistentClient(path='chroma_db')
-
-collection = client.get_collection('langchain')
-
-print('Count:', collection.count())
-"
-POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -it $POD -- python -c "
-from rag_pipeline import get_answer
-
-print(get_answer('What is Kubernetes?'))
-"
-curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
-  "question":"What is Kubernetes?"
-}'
-minikube status
-kubectl describe pod rag-chatbot-c6c89948b-mjdd5 | grep -A15 "Last State"
-kubectl describe pod $(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
-cd ~/LLMOps-RAG-Chatbot
-minikube status
-sudo systemctl status jenkins
-sudo su - jenkins
-kubectl get pods
-kubectl get deployment
-kubectl get svc
-kubectl exec -it deployment/rag-chatbot -- find /app/chroma_db -type f
-tree
-ls -lart
-cd backend/
-ls -lart
-vi rag_pipeline.py 
-git status
-docker build -t babujoseph5757/rag-chatbot:22 ./backend
-cd ..
-docker build -t babujoseph5757/rag-chatbot:22 ./backend
-docker push babujoseph5757/rag-chatbot:22
-kubectl set image deployment/rag-chatbot rag-chatbot=babujoseph5757/rag-chatbot:22
-kubectl rollout status deployment/rag-chatbot
-kubectl exec -it deployment/rag-chatbot -- ls -ltr /app/chroma_db
-curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
-  "question":"What is Kubernetes?"
-}'
-kubectl exec -it deployment/rag-chatbot -- python -c "
-from rag_pipeline import get_answer
-print(get_answer('What is Kubernetes?'))
-"
-curl http://localhost:11434/api/tags
-cd backend/
->rag_pipeline.py 
-vi rag_pipeline.py 
-git status add .
-git add .
-git commit -m "Updated Ollama endpoint for Kubernetes"
-git push origin master
-df -h
-docker system df -v
-kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
-docker rmi babujoseph5757/rag-chatbot:21
-docker rmi babujoseph5757/rag-chatbot-frontend:18
-docker builder prune -a -f
-df -h
-docker rmi babujoseph5757/rag-chatbot:18
-docker rmi babujoseph5757/rag-chatbot:21
-docker rmi babujoseph5757/rag-chatbot-frontend:18
-docker builder prune -a -f
-docker image prune -f
-docker container prune -f
-sudo du -xh /var | sort -h | tail -30
-docker rmi babujoseph5757/rag-chatbot:21
-minikube ssh
-kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
-minikube ssh
-df -f
-df -h
-cd ..
-df -h
-git status
-grep "from .*rag_pipeline" backend/app.py
-ls -ltr backend/chroma_db
-grep "EMAIL_RECIPIENT" Jenkinsfile
-python3 -m pytest tests/ -v
-python3 -m pip show fastapi
-python3 -m pip install --user -r backend/requirements.txt
-   
->Jenkinsfile 
-vi Jenkinsfile 
-git add .
-git commit -m "Fixed backend package imports for pytest"
-git push origin master
-python3 -m pip show fastapi
-python3 -m pytest tests/ -v
-vi Jenkinsfile 
-df -h
-kubectl exec -it deployment/rag-chatbot -- curl http://host.minikube.internal:11434/api/tags
-kubectl exec -it deployment/rag-chatbot -- python -c "
-import requests
-print(requests.get('http://host.minikube.internal:11434/api/tags').status_code)
-"
-kubectl exec -it deployment/rag-chatbot -- python -c "
-import requests
-print(requests.get('http://host.minikube.internal:11434/api/tags').text)
-"
-kubectl exec -it deployment/rag-chatbot -- python -c "
-from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
-
-db = Chroma(
-    persist_directory='chroma_db',
-    embedding_function=HuggingFaceEmbeddings(
-        model_name='sentence-transformers/all-MiniLM-L6-v2'
-    )
-)
-
-print('Document Count:', db._collection.count())
-"
-kubectl exec -it deployment/rag-chatbot -- python -c "
-from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
-
-db = Chroma(
-    persist_directory='chroma_db',
-    embedding_function=HuggingFaceEmbeddings(
-        model_name='sentence-transformers/all-MiniLM-L6-v2'
-    )
-)
-
-docs = db.similarity_search(
-    'What is Kubernetes?',
-    k=3
-)
-
-print(docs)
-"
-kubectl exec -it deployment/rag-chatbot -- python -c "
-from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
-
-db = Chroma(
-    persist_directory='chroma_db',
-    embedding_function=HuggingFaceEmbeddings(
-        model_name='sentence-transformers/all-MiniLM-L6-v2'
-    )
-)
-
-docs = db.similarity_search(
-    'What is Kubernetes?',
-    k=3
-)
-
-print('Retrieved Docs:')
-print('----------------------------------')
-
-for d in docs:
-    print(d.page_content[:500])
-    print('----------------------------------')
-"
-cat src/ingestion.py
-cat src/vectorstore.py
-cd backend/
->rag_pipeline.py 
-vi rag_pipeline.py 
-cd ..
-git add .
-git commit -m "Improved RAG retrieval with MMR search"
-git push origin master
-nohup kubectl port-forward -n monitoring svc/grafana 3000:80 --address 0.0.0.0 > grafana.log 2>&1 &
-nohup kubectl port-forward -n monitoring svc/prometheus-server 9090:80 --address 0.0.0.0 > prometheus.log 2>&1 &
-curl http://192.168.49.2:30090/metrics | grep rag_
-for i in {1..10}; do curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
-  "question":"What is Kubernetes?"
-}'; done
-kubectl exec -it deployment/rag-chatbot -- python -c "
-from rag_pipeline import get_answer
-
-result = get_answer('What is Kubernetes?')
-
-print(result)
-"
-from rag_pipeline import get_answer
-print(get_answer("What is Kubernetes?"))
-kubectl exec -it deployment/rag-chatbot -- python -c "
-from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
-
-db = Chroma(
-    persist_directory='chroma_db',
-    embedding_function=HuggingFaceEmbeddings(
-        model_name='sentence-transformers/all-MiniLM-L6-v2'
-    )
-)
-
-docs = db.max_marginal_relevance_search(
-    'What is Kubernetes?',
-    k=6,
-    fetch_k=20
-)
-
-print('Retrieved:', len(docs))
-
-for d in docs:
-    print('--------------------')
-    print(d.page_content[:500])
-"
-kubectl exec -it deployment/rag-chatbot -- python -c "
-from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
-
-db = Chroma(
-    persist_directory='chroma_db',
-    embedding_function=HuggingFaceEmbeddings(
-        model_name='sentence-transformers/all-MiniLM-L6-v2'
-    )
-)
-
-print('Collections:')
-print(db._client.list_collections())
-"
-kubectl exec -it deployment/rag-chatbot -- python -c "
-from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
-
-db = Chroma(
-    collection_name='langchain',
-    persist_directory='chroma_db',
-    embedding_function=HuggingFaceEmbeddings(
-        model_name='sentence-transformers/all-MiniLM-L6-v2'
-    )
-)
-
-print('Count:', db._collection.count())
-"
-kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
-kubectl exec -it deployment/rag-chatbot -- python -c "
-from chromadb import PersistentClient
-client = PersistentClient(path='chroma_db')
-print(client.list_collections())
-"
-kubectl exec -it deployment/rag-chatbot -- python -c "
-from chromadb import PersistentClient
-client = PersistentClient(path='chroma_db')
-print(client.list_collections())
-"
-kubectl exec -it deployment/rag-chatbot -- python -c "
-from chromadb import PersistentClient
-
-client = PersistentClient(path='chroma_db')
-
-collection = client.get_collection('langchain')
-
-print('Count:', collection.count())
-"
-python3 -c "
-from chromadb import PersistentClient
-
-client = PersistentClient(path='backend/chroma_db')
-
-collection = client.get_collection('langchain')
-
-print('Host Count:', collection.count())
-"
-docker run --rm -it babujoseph5757/rag-chatbot:22 ls -R /app/chroma_db
-vi src/ingestion.py 
-git add .
-git commit -m "Updated Ollama endpoint for Kubernetes"
-git push origin master
-vi src/ingestion.py 
-cat src/ingestion.py 
-python3 src/ingestion.py
-git status
-df -h
-kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
-kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
-docker run --rm -it babujoseph5757/rag-chatbot:23 ls -R /app
-cat .dockerignore
-vi .dockerignore 
-git add .
-git commit -m "Include Chroma vector database in backend image"
-git push origin master
-kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
-docker run --rm -it babujoseph5757/rag-chatbot:24 ls -R /app
-docker run --rm -it babujoseph5757/rag-chatbot:24 ls -R /app/chroma_db
-cd backend/
->Dockerfile 
-vi Dockerfile 
-ls-lart
-ls -lart
-docker build -t rag-test ./backend
-cd ..
-docker build -t rag-test ./backend
-docker run --rm -it rag-test ls -R /app/chroma_db
-git add .
-git commit -m "Include ChromaDB vector store in backend image"
-git push origin master
-cd backend/
->Dockerfile 
-vi Dockerfile 
-cd ..
-cd frontend/
->Dockerfile 
-vi Dockerfile 
-cd ..
-vi .dockerignore 
->Jenkinsfile 
-vi Jenkinsfile 
-git add .
-git commit -m "Packaged ChromaDB with backend image"
-git push origin master
-cd backend/
->Dockerfile 
-vi Dockerfile 
-cd ..
-git add .
-git add backend/Dockerfile Jenkinsfile .dockerignore
-git commit -m "Packaged ChromaDB with backend image"
-git push origin master
-kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
-docker run --rm -it rag-test ls -R /app/chroma_db
-kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
-kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
-kubectl describe deployment rag-chatbot | grep Image
-docker pull babujoseph5757/rag-chatbot:28
-docker run --rm -it babujoseph5757/rag-chatbot:28 ls -R /app
-git ls-files | grep chroma_db
-git check-ignore -v backend/chroma_db/chroma.sqlite3
-ls -lart
-vi .gitignore 
-git add .
-git commit -m "Added Chroma vector database to backend image"
-git push origin master
-ls -larty
-ls -lart
-cd backend/
-ls -lart
-cd ..
-kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
-kubectl exec -it deployment/rag-chatbot -- python -c "
-from chromadb import PersistentClient
-
-client = PersistentClient(path='chroma_db')
-
-collection = client.get_collection('langchain')
-
-print('Count:', collection.count())
-"
-kubectl exec -it deployment/rag-chatbot -- python -c "
-from langchain_chroma import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
-
-db = Chroma(
-    collection_name='langchain',
-    persist_directory='chroma_db',
-    embedding_function=HuggingFaceEmbeddings(
-        model_name='sentence-transformers/all-MiniLM-L6-v2'
-    )
-)
-
-docs = db.similarity_search(
-    'What is Kubernetes?',
-    k=5
-)
-
-print('Retrieved:', len(docs))
-
-for d in docs:
-    print('---------------------')
-    print(d.page_content[:500])
-"
-curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
-  "question":"What is Kubernetes?"
-}'
-cd LLMOps-RAG-Chatbot/
-minikube ssh
-minikube start --driver=docker
-df -h
-POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -it $POD -- python -c "
-import requests
-
-r = requests.post(
-    'http://host.minikube.internal:11434/api/generate',
-    json={
-        'model':'llama3',
-        'prompt':'What is Kubernetes?',
-        'stream':False
-    },
-    timeout=120
-)
-
-
-POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
-kubectl exec -it $POD -- python -c "
-import requests
-
-r = requests.post(
-    'http://host.minikube.internal:11434/api/generate',
-    json={
-        'model':'llama3',
-        'prompt':'What is Kubernetes?',
-        'stream':False
-    },
-    timeout=120
-)
-
-print(r.status_code)
-print(r.text[:1000])
-"
-time curl http://localhost:11434/api/generate -d '{
-  "model":"llama3",
-  "prompt":"What is Kubernetes?",
-  "stream":false
-}'
-cd backend/
->rag_pipeline.py 
-vi rag_pipeline.py 
-cd ..
-git add .
-git commit -m "Optimized RAG retrieval and prompt size"
-git push origin master
-minikube ssh
-df -h
-curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
-  "question":"What is Kubernetes?"
-}'
-kubectl logs deployment/rag-chatbot -f
-ollama ps
-ollama list
-time curl http://localhost:11434/api/generate -d '{
-  "model":"llama3",
-  "prompt":"What is Kubernetes?",
-  "stream":false
-}'
-cd ..
-time curl http://localhost:11434/api/generate -d '{
-  "model":"llama3",
-  "prompt":"What is Kubernetes?",
-  "stream":false
-}'
-cd LLMOps-RAG-Chatbot/
-sudo journalctl -u jenkins -n 200
-sudo systemctl status jenkins
+ 1113  pip uninstall -y dvc dvc-s3
+ 1114  pip install "dvc[s3]"
+ 1115  history > all_commands.txt
