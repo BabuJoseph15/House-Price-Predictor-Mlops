@@ -4,15 +4,17 @@ pipeline {
 
     environment {
 
+        PATH = "/var/lib/jenkins/.local/bin:${env.PATH}"
+
         DOCKER_IMAGE = "babujoseph5757/house-price-api"
 
         IMAGE_TAG = "${BUILD_NUMBER}"
 
         KUBECONFIG = "/var/lib/jenkins/.kube/config"
 
-        EMAIL_RECIPIENT = "babu.joseph5757@gmail.com"
-
         TRIVY_TEMP_DIR = "/var/lib/jenkins/trivy-temp"
+
+        EMAIL_RECIPIENT = "babu.joseph5757@gmail.com"
     }
 
     options {
@@ -31,7 +33,6 @@ pipeline {
         stage('Checkout Source') {
 
             steps {
-
                 checkout scm
             }
         }
@@ -43,6 +44,20 @@ pipeline {
                 sh '''
                 pwd
                 ls -ltr
+                '''
+            }
+        }
+
+        stage('Verify DVC') {
+
+            steps {
+
+                sh '''
+                which dvc
+
+                dvc version
+
+                dvc remote list
                 '''
             }
         }
@@ -119,7 +134,7 @@ pipeline {
             }
         }
 
-        stage('Trivy Scan') {
+        stage('Trivy Security Scan') {
 
             steps {
 
@@ -195,11 +210,17 @@ pipeline {
             steps {
 
                 sh '''
+                echo "===== Deployments ====="
                 kubectl get deployment
 
+                echo "===== Pods ====="
                 kubectl get pods
 
+                echo "===== Services ====="
                 kubectl get svc
+
+                echo "===== Current Image ====="
+                kubectl describe deployment house-price-api | grep Image
                 '''
             }
         }
@@ -215,14 +236,20 @@ pipeline {
                 body: """
 House Price MLOps Pipeline Successful
 
+Job Name:
+${JOB_NAME}
+
 Build Number:
 ${BUILD_NUMBER}
 
-Image:
+Docker Image:
 ${DOCKER_IMAGE}:${IMAGE_TAG}
 
 Build URL:
 ${BUILD_URL}
+
+Regards,
+Jenkins
 """
             )
         }
@@ -235,8 +262,19 @@ ${BUILD_URL}
                 body: """
 House Price MLOps Pipeline Failed
 
+Job Name:
+${JOB_NAME}
+
+Build Number:
+${BUILD_NUMBER}
+
 Build URL:
 ${BUILD_URL}
+
+Please review Jenkins logs.
+
+Regards,
+Jenkins
 """
             )
         }
@@ -244,11 +282,13 @@ ${BUILD_URL}
         always {
 
             sh '''
-            docker builder prune -f || true
+            rm -rf ${TRIVY_TEMP_DIR}/* || true
+
+            docker container prune -f || true
 
             docker image prune -f || true
 
-            docker container prune -f || true
+            docker builder prune -f || true
             '''
 
             cleanWs()
