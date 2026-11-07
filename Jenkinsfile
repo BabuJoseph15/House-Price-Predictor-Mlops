@@ -111,10 +111,15 @@ pipeline {
             steps {
 
                 sh '''
+                python3 -m pip install \
+                --user \
+                --no-cache-dir \
+                -r requirements.txt
+
                 if [ -d tests ]; then
                     python3 -m pytest tests/ -v
                 else
-                    echo "No tests directory found. Skipping..."
+                    echo "No tests found. Skipping..."
                 fi
                 '''
             }
@@ -217,7 +222,7 @@ pipeline {
                 echo "===== Services ====="
                 kubectl get svc
 
-                echo "===== Current Image ====="
+                echo "===== Image ====="
                 kubectl describe deployment house-price-api | grep Image
                 '''
             }
@@ -230,12 +235,15 @@ pipeline {
 
             emailext(
                 to: "${EMAIL_RECIPIENT}",
-                subject: "SUCCESS - ${JOB_NAME} #${BUILD_NUMBER}",
+                subject: "✅ SUCCESS - ${JOB_NAME} #${BUILD_NUMBER}",
                 body: """
 House Price MLOps Pipeline Successful
 
-Job Name     : ${JOB_NAME}
-Build Number : ${BUILD_NUMBER}
+Job Name:
+${JOB_NAME}
+
+Build Number:
+${BUILD_NUMBER}
 
 Docker Image:
 ${DOCKER_IMAGE}:${IMAGE_TAG}
@@ -253,12 +261,15 @@ Jenkins
 
             emailext(
                 to: "${EMAIL_RECIPIENT}",
-                subject: "FAILED - ${JOB_NAME} #${BUILD_NUMBER}",
+                subject: "❌ FAILED - ${JOB_NAME} #${BUILD_NUMBER}",
                 body: """
 House Price MLOps Pipeline Failed
 
-Job Name     : ${JOB_NAME}
-Build Number : ${BUILD_NUMBER}
+Job Name:
+${JOB_NAME}
+
+Build Number:
+${BUILD_NUMBER}
 
 Build URL:
 ${BUILD_URL}
