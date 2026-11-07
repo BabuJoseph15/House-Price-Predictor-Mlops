@@ -3,138 +3,192 @@ pipeline {
     agent any
 
     environment {
-        PATH = "/var/lib/jenkins/.local/bin:${env.PATH}"
 
         DOCKER_IMAGE = "babujoseph5757/house-price-api"
-        IMAGE_TAG = "${BUILD_NUMBER}"
 
         KUBECONFIG = "/var/lib/jenkins/.kube/config"
 
+        DVC_BIN = "/var/lib/jenkins/.local/bin/dvc"
+
+        SCANNER_HOME = tool 'sonar-scanner'
+
         TRIVY_TEMP_DIR = "/var/lib/jenkins/trivy-temp"
 
-        EMAIL_RECIPIENT = "babu.joseph5757@gmail.com"
+        AWS_DEFAULT_REGION = "ap-south-1"
     }
 
     options {
         timestamps()
-
-        buildDiscarder(
-            logRotator(
-                numToKeepStr: '10'
-            )
-        )
+        skipDefaultCheckout(true)
     }
 
     stages {
 
-        stage('Checkout Source') {
+        stage('Checkout Code') {
+
             steps {
-                checkout scm
+
+                git branch: 'master',
+                    url: 'https://github.com/BabuJoseph15/House-Price-Predictor-Mlops.git'
             }
         }
 
-        stage('Verify Workspace') {
+        stage('Verify Files') {
+
             steps {
+
                 sh '''
                 pwd
-                ls -ltr
+
+                ls -la
+
+                test -f app.py
+                test -f Dockerfile
+                test -f requirements.txt
+                test -f deployment.yaml
+                test -f service.yaml
                 '''
             }
         }
 
-        stage('Verify DVC') {
+        stage('Install Dependencies') {
+
             steps {
+
                 sh '''
-                /var/lib/jenkins/.local/bin/dvc version
-                /var/lib/jenkins/.local/bin/dvc remote list
+                python3 -m venv venv
+
+                . venv/bin/activate
+
+                python --version
+
+                pip install --upgrade pip
+
+                pip install -r requirements.txt
+
+                pip check
                 '''
             }
         }
 
         stage('DVC Pull') {
+
             steps {
-                sh '''
-                /var/lib/jenkins/.local/bin/dvc pull
-                '''
-            }
-        }
 
-        stage('SonarQube Analysis') {
-            steps {
-                script {
+                withCredentials([
+                    string(
+                        credentialsId: 'aws-access-key-id',
+                        variable: 'AWS_ACCESS_KEY_ID'
+                    ),
+                    string(
+                        credentialsId: 'aws-secret-access-key',
+                        variable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
 
-                    def scannerHome = tool 'sonar-scanner'
+                    sh '''
+                    export PATH=/var/lib/jenkins/.local/bin:$PATH
 
-                    withSonarQubeEnv('sonarqube-server') {
+                    ${DVC_BIN} doctor
 
-                        sh """
-                        ${scannerHome}/bin/sonar-scanner \
-                        -Dsonar.projectKey=House-Price-MLOps \
-                        -Dsonar.projectName='House Price MLOps' \
-                        -Dsonar.sources=. \
-                        -Dsonar.python.version=3
-                        """
-                    }
-                }
-            }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 30, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: false
+                    ${DVC_BIN} pull
+                    '''
                 }
             }
         }
 
         stage('Run Unit Tests') {
-            steps {
-                sh '''
-                python3 -m pip install \
-                --user \
-                --no-cache-dir \
-                -r requirements.txt
 
-                if [ -d tests ]; then
-                    python3 -m pytest tests/ -v
-                else
-                    echo "No tests found. Skipping..."
-                fi
+            steps {
+
+                sh '''
+                . venv/bin/activate
+
+                export PYTHONPATH=$WORKSPACE
+
+                pytest tests/ -v
                 '''
             }
         }
 
-        stage('Build Docker Image') {
+        stage('SonarQube Analysis') {
+
             steps {
+
+                withSonarQubeEnv('sonarqube-server') {
+
+                    sh '''
+                    ${SCANNER_HOME}/bin/sonar-scanner \
+                      -Dsonar.projectKey=House-Price-MLOps \
+                      -Dsonar.projectName="House Price MLOps" \
+                      -Dsonar.sources=. \
+                      -Dsonar.python.version=3.9
+                    '''
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+
+            steps {
+
+                timeout(
+                    time: 10,
+                    unit: 'MINUTES'
+                ) {
+
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+
+            steps {
+
                 sh '''
                 docker build \
-                -t ${DOCKER_IMAGE}:${IMAGE_TAG} \
-                -t ${DOCKER_IMAGE}:latest \
-                .
+                  -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .
+
+                docker tag \
+                  ${DOCKER_IMAGE}:${BUILD_NUMBER} \
+                  ${DOCKER_IMAGE}:latest
+                '''
+            }
+        }
+
+        stage('Prepare Trivy Temp Directory') {
+
+            steps {
+
+                sh '''
+                mkdir -p ${TRIVY_TEMP_DIR}
                 '''
             }
         }
 
         stage('Trivy Security Scan') {
-            steps {
-                sh '''
-                mkdir -p ${TRIVY_TEMP_DIR}
 
+            steps {
+
+                sh '''
                 export TMPDIR=${TRIVY_TEMP_DIR}
 
                 trivy image \
-                --timeout 30m \
-                --skip-version-check \
-                --scanners vuln \
-                --severity HIGH,CRITICAL \
-                --exit-code 0 \
-                ${DOCKER_IMAGE}:${IMAGE_TAG}
+                  --timeout 30m \
+                  --skip-version-check \
+                  --scanners vuln \
+                  --severity HIGH,CRITICAL \
+                  --exit-code 0 \
+                  ${DOCKER_IMAGE}:${BUILD_NUMBER} || true
                 '''
             }
         }
 
-        stage('Docker Login') {
+        stage('Push Docker Image') {
+
             steps {
+
                 withCredentials([
                     usernamePassword(
                         credentialsId: 'dockerhub',
@@ -145,88 +199,60 @@ pipeline {
 
                     sh '''
                     echo "$DOCKER_PASS" | docker login \
-                    -u "$DOCKER_USER" \
-                    --password-stdin
+                        -u "$DOCKER_USER" \
+                        --password-stdin
+
+                    docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}
+
+                    docker push ${DOCKER_IMAGE}:latest
+
+                    docker logout
                     '''
                 }
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Deploy to Kubernetes') {
+
             steps {
 
                 sh '''
-                docker push ${DOCKER_IMAGE}:${IMAGE_TAG}
-                docker push ${DOCKER_IMAGE}:latest
-                '''
-            }
-        }
+                export KUBECONFIG=${KUBECONFIG}
 
-        stage('Validate Kubernetes Manifests') {
-            steps {
-                sh '''
-                test -f k8s/deployment.yaml
-                test -f k8s/service.yaml
-
-                echo "Kubernetes manifests found."
-                '''
-            }
-        }
-
-        stage('Deploy To Kubernetes') {
-            steps {
-
-                sh '''
-                echo "===== Kubernetes Deployment ====="
-
-                kubectl get nodes
-
-                if kubectl get deployment house-price-api >/dev/null 2>&1
-                then
-                    echo "Existing deployment found"
-
-                    kubectl set image deployment/house-price-api \
-                    house-price-api=${DOCKER_IMAGE}:${IMAGE_TAG}
-
-                else
-                    echo "Deployment not found"
-
-                    echo "Creating deployment..."
-
-                    kubectl apply -f k8s/deployment.yaml
-                    kubectl apply -f k8s/service.yaml
-
-                    sleep 15
-
-                    kubectl set image deployment/house-price-api \
-                    house-price-api=${DOCKER_IMAGE}:${IMAGE_TAG}
-                fi
+                kubectl set image deployment/house-price-api \
+                  house-price-api=${DOCKER_IMAGE}:${BUILD_NUMBER}
 
                 kubectl rollout status deployment/house-price-api \
-                --timeout=900s
+                  --timeout=300s
                 '''
             }
         }
 
         stage('Verify Deployment') {
+
             steps {
 
                 sh '''
-                echo "===== Deployments ====="
-                kubectl get deployment
+                export KUBECONFIG=${KUBECONFIG}
 
-                echo
-                echo "===== Pods ====="
+                kubectl get deployments
+
                 kubectl get pods -o wide
 
-                echo
-                echo "===== Services ====="
                 kubectl get svc
+                '''
+            }
+        }
 
-                echo
-                echo "===== Deployment Image ====="
+        stage('Application Health Check') {
 
-                kubectl describe deployment house-price-api | grep Image
+            steps {
+
+                sh '''
+                MINIKUBE_IP=$(minikube ip)
+
+                curl -f \
+                  http://${MINIKUBE_IP}:30080/health
                 '''
             }
         }
@@ -236,62 +262,33 @@ pipeline {
 
         success {
 
-            emailext(
-                to: "${EMAIL_RECIPIENT}",
-                subject: "SUCCESS - ${JOB_NAME} #${BUILD_NUMBER}",
-                body: """
-House Price MLOps Pipeline Successful
-
-Job Name:
-${JOB_NAME}
-
-Build Number:
-${BUILD_NUMBER}
-
-Docker Image:
-${DOCKER_IMAGE}:${IMAGE_TAG}
-
-Build URL:
-${BUILD_URL}
-
-Regards,
-Jenkins
-"""
-            )
+            echo '✅ CI/CD Pipeline completed successfully!'
         }
 
         failure {
 
-            emailext(
-                to: "${EMAIL_RECIPIENT}",
-                subject: "FAILED - ${JOB_NAME} #${BUILD_NUMBER}",
-                body: """
-House Price MLOps Pipeline Failed
+            echo '❌ Pipeline failed. Collecting diagnostics...'
 
-Job Name:
-${JOB_NAME}
+            sh '''
+            df -h || true
 
-Build Number:
-${BUILD_NUMBER}
+            docker system df || true
 
-Build URL:
-${BUILD_URL}
+            export KUBECONFIG=${KUBECONFIG}
 
-Please review Jenkins console logs.
+            kubectl get pods || true
 
-Regards,
-Jenkins
-"""
-            )
+            kubectl get deployments || true
+
+            kubectl get events \
+                --sort-by=.metadata.creationTimestamp \
+                | tail -20 || true
+            '''
         }
 
         always {
 
             sh '''
-            rm -rf ${TRIVY_TEMP_DIR}/* || true
-
-            docker container prune -f || true
-
             docker image prune -f || true
 
             docker builder prune -f || true
