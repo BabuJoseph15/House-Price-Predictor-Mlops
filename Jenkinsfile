@@ -3,11 +3,9 @@ pipeline {
     agent any
 
     environment {
-
         PATH = "/var/lib/jenkins/.local/bin:${env.PATH}"
 
         DOCKER_IMAGE = "babujoseph5757/house-price-api"
-
         IMAGE_TAG = "${BUILD_NUMBER}"
 
         KUBECONFIG = "/var/lib/jenkins/.kube/config"
@@ -18,7 +16,6 @@ pipeline {
     }
 
     options {
-
         timestamps()
 
         buildDiscarder(
@@ -31,16 +28,13 @@ pipeline {
     stages {
 
         stage('Checkout Source') {
-
             steps {
                 checkout scm
             }
         }
 
         stage('Verify Workspace') {
-
             steps {
-
                 sh '''
                 pwd
                 ls -ltr
@@ -49,21 +43,16 @@ pipeline {
         }
 
         stage('Verify DVC') {
-
             steps {
-
                 sh '''
                 /var/lib/jenkins/.local/bin/dvc version
-
                 /var/lib/jenkins/.local/bin/dvc remote list
                 '''
             }
         }
 
         stage('DVC Pull') {
-
             steps {
-
                 sh '''
                 /var/lib/jenkins/.local/bin/dvc pull
                 '''
@@ -71,9 +60,7 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-
             steps {
-
                 script {
 
                     def scannerHome = tool 'sonar-scanner'
@@ -83,7 +70,9 @@ pipeline {
                         sh """
                         ${scannerHome}/bin/sonar-scanner \
                         -Dsonar.projectKey=House-Price-MLOps \
-                        -Dsonar.projectName='House Price MLOps'
+                        -Dsonar.projectName='House Price MLOps' \
+                        -Dsonar.sources=. \
+                        -Dsonar.python.version=3
                         """
                     }
                 }
@@ -91,25 +80,15 @@ pipeline {
         }
 
         stage('Quality Gate') {
-
             steps {
-
-                timeout(
-                    time: 30,
-                    unit: 'MINUTES'
-                ) {
-
-                    waitForQualityGate(
-                        abortPipeline: false
-                    )
+                timeout(time: 30, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: false
                 }
             }
         }
 
         stage('Run Unit Tests') {
-
             steps {
-
                 sh '''
                 python3 -m pip install \
                 --user \
@@ -126,21 +105,18 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-
             steps {
-
                 sh '''
                 docker build \
                 -t ${DOCKER_IMAGE}:${IMAGE_TAG} \
+                -t ${DOCKER_IMAGE}:latest \
                 .
                 '''
             }
         }
 
         stage('Trivy Security Scan') {
-
             steps {
-
                 sh '''
                 mkdir -p ${TRIVY_TEMP_DIR}
 
@@ -158,9 +134,7 @@ pipeline {
         }
 
         stage('Docker Login') {
-
             steps {
-
                 withCredentials([
                     usernamePassword(
                         credentialsId: 'dockerhub',
@@ -179,28 +153,54 @@ pipeline {
         }
 
         stage('Push Docker Image') {
-
             steps {
 
                 sh '''
                 docker push ${DOCKER_IMAGE}:${IMAGE_TAG}
-
-                docker tag \
-                ${DOCKER_IMAGE}:${IMAGE_TAG} \
-                ${DOCKER_IMAGE}:latest
-
                 docker push ${DOCKER_IMAGE}:latest
                 '''
             }
         }
 
-        stage('Deploy To Kubernetes') {
+        stage('Validate Kubernetes Manifests') {
+            steps {
+                sh '''
+                test -f k8s/deployment.yaml
+                test -f k8s/service.yaml
 
+                echo "Kubernetes manifests found."
+                '''
+            }
+        }
+
+        stage('Deploy To Kubernetes') {
             steps {
 
                 sh '''
-                kubectl set image deployment/house-price-api \
-                house-price-api=${DOCKER_IMAGE}:${IMAGE_TAG}
+                echo "===== Kubernetes Deployment ====="
+
+                kubectl get nodes
+
+                if kubectl get deployment house-price-api >/dev/null 2>&1
+                then
+                    echo "Existing deployment found"
+
+                    kubectl set image deployment/house-price-api \
+                    house-price-api=${DOCKER_IMAGE}:${IMAGE_TAG}
+
+                else
+                    echo "Deployment not found"
+
+                    echo "Creating deployment..."
+
+                    kubectl apply -f k8s/deployment.yaml
+                    kubectl apply -f k8s/service.yaml
+
+                    sleep 15
+
+                    kubectl set image deployment/house-price-api \
+                    house-price-api=${DOCKER_IMAGE}:${IMAGE_TAG}
+                fi
 
                 kubectl rollout status deployment/house-price-api \
                 --timeout=900s
@@ -209,20 +209,23 @@ pipeline {
         }
 
         stage('Verify Deployment') {
-
             steps {
 
                 sh '''
                 echo "===== Deployments ====="
                 kubectl get deployment
 
+                echo
                 echo "===== Pods ====="
-                kubectl get pods
+                kubectl get pods -o wide
 
+                echo
                 echo "===== Services ====="
                 kubectl get svc
 
-                echo "===== Image ====="
+                echo
+                echo "===== Deployment Image ====="
+
                 kubectl describe deployment house-price-api | grep Image
                 '''
             }
@@ -235,7 +238,7 @@ pipeline {
 
             emailext(
                 to: "${EMAIL_RECIPIENT}",
-                subject: "✅ SUCCESS - ${JOB_NAME} #${BUILD_NUMBER}",
+                subject: "SUCCESS - ${JOB_NAME} #${BUILD_NUMBER}",
                 body: """
 House Price MLOps Pipeline Successful
 
@@ -261,7 +264,7 @@ Jenkins
 
             emailext(
                 to: "${EMAIL_RECIPIENT}",
-                subject: "❌ FAILED - ${JOB_NAME} #${BUILD_NUMBER}",
+                subject: "FAILED - ${JOB_NAME} #${BUILD_NUMBER}",
                 body: """
 House Price MLOps Pipeline Failed
 
