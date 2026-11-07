@@ -10,9 +10,20 @@ pipeline {
 
         KUBECONFIG = "/var/lib/jenkins/.kube/config"
 
-        TRIVY_TEMP_DIR = "/var/lib/jenkins/trivy-temp"
-
         EMAIL_RECIPIENT = "babu.joseph5757@gmail.com"
+
+        TRIVY_TEMP_DIR = "/var/lib/jenkins/trivy-temp"
+    }
+
+    options {
+
+        timestamps()
+
+        buildDiscarder(
+            logRotator(
+                numToKeepStr: '10'
+            )
+        )
     }
 
     stages {
@@ -20,7 +31,29 @@ pipeline {
         stage('Checkout Source') {
 
             steps {
+
                 checkout scm
+            }
+        }
+
+        stage('Verify Workspace') {
+
+            steps {
+
+                sh '''
+                pwd
+                ls -ltr
+                '''
+            }
+        }
+
+        stage('DVC Pull') {
+
+            steps {
+
+                sh '''
+                dvc pull
+                '''
             }
         }
 
@@ -28,22 +61,17 @@ pipeline {
 
             steps {
 
-                withSonarQubeEnv('sonarqube-server') {
+                script {
 
-                    withCredentials([
-                        string(
-                            credentialsId: 'house-price-sonar-token',
-                            variable: 'SONAR_TOKEN'
-                        )
-                    ]) {
+                    def scannerHome = tool 'sonar-scanner'
 
-                        sh '''
-                        sonar-scanner \
-                        -Dsonar.projectKey=house-price-mlops \
-                        -Dsonar.projectName="House Price MLOps" \
-                        -Dsonar.host.url=$SONAR_HOST_URL \
-                        -Dsonar.token=$SONAR_TOKEN
-                        '''
+                    withSonarQubeEnv('sonarqube-server') {
+
+                        sh """
+                        ${scannerHome}/bin/sonar-scanner \
+                        -Dsonar.projectKey=House-Price-MLOps \
+                        -Dsonar.projectName='House Price MLOps'
+                        """
                     }
                 }
             }
@@ -54,11 +82,13 @@ pipeline {
             steps {
 
                 timeout(
-                    time: 10,
+                    time: 30,
                     unit: 'MINUTES'
                 ) {
 
-                    waitForQualityGate abortPipeline: false
+                    waitForQualityGate(
+                        abortPipeline: false
+                    )
                 }
             }
         }
@@ -99,7 +129,7 @@ pipeline {
                 export TMPDIR=${TRIVY_TEMP_DIR}
 
                 trivy image \
-                --timeout 20m \
+                --timeout 30m \
                 --skip-version-check \
                 --scanners vuln \
                 --severity HIGH,CRITICAL \
@@ -155,7 +185,21 @@ pipeline {
                 house-price-api=${DOCKER_IMAGE}:${IMAGE_TAG}
 
                 kubectl rollout status deployment/house-price-api \
-                --timeout=300s
+                --timeout=900s
+                '''
+            }
+        }
+
+        stage('Verify Deployment') {
+
+            steps {
+
+                sh '''
+                kubectl get deployment
+
+                kubectl get pods
+
+                kubectl get svc
                 '''
             }
         }
@@ -169,9 +213,13 @@ pipeline {
                 to: "${EMAIL_RECIPIENT}",
                 subject: "SUCCESS - ${JOB_NAME} #${BUILD_NUMBER}",
                 body: """
-House Price Pipeline Successful
+House Price MLOps Pipeline Successful
 
-Build Number: ${BUILD_NUMBER}
+Build Number:
+${BUILD_NUMBER}
+
+Image:
+${DOCKER_IMAGE}:${IMAGE_TAG}
 
 Build URL:
 ${BUILD_URL}
@@ -185,7 +233,7 @@ ${BUILD_URL}
                 to: "${EMAIL_RECIPIENT}",
                 subject: "FAILED - ${JOB_NAME} #${BUILD_NUMBER}",
                 body: """
-House Price Pipeline Failed
+House Price MLOps Pipeline Failed
 
 Build URL:
 ${BUILD_URL}
@@ -197,8 +245,10 @@ ${BUILD_URL}
 
             sh '''
             docker builder prune -f || true
-            docker container prune -f || true
+
             docker image prune -f || true
+
+            docker container prune -f || true
             '''
 
             cleanWs()
