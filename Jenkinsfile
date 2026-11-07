@@ -53,11 +53,9 @@ pipeline {
             steps {
 
                 sh '''
-                which dvc
+                /var/lib/jenkins/.local/bin/dvc version
 
-                dvc version
-
-                dvc remote list
+                /var/lib/jenkins/.local/bin/dvc remote list
                 '''
             }
         }
@@ -67,7 +65,7 @@ pipeline {
             steps {
 
                 sh '''
-                dvc pull
+                /var/lib/jenkins/.local/bin/dvc pull
                 '''
             }
         }
@@ -116,7 +114,7 @@ pipeline {
                 if [ -d tests ]; then
                     python3 -m pytest tests/ -v
                 else
-                    echo "No tests found. Skipping..."
+                    echo "No tests directory found. Skipping..."
                 fi
                 '''
             }
@@ -236,11 +234,8 @@ pipeline {
                 body: """
 House Price MLOps Pipeline Successful
 
-Job Name:
-${JOB_NAME}
-
-Build Number:
-${BUILD_NUMBER}
+Job Name     : ${JOB_NAME}
+Build Number : ${BUILD_NUMBER}
 
 Docker Image:
 ${DOCKER_IMAGE}:${IMAGE_TAG}
@@ -262,16 +257,13 @@ Jenkins
                 body: """
 House Price MLOps Pipeline Failed
 
-Job Name:
-${JOB_NAME}
-
-Build Number:
-${BUILD_NUMBER}
+Job Name     : ${JOB_NAME}
+Build Number : ${BUILD_NUMBER}
 
 Build URL:
 ${BUILD_URL}
 
-Please review Jenkins logs.
+Please review Jenkins console logs.
 
 Regards,
 Jenkins
