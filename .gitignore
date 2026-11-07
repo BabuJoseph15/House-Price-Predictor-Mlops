@@ -1,8 +1,15 @@
-artifacts/
 mlruns/
 venv/
-__pycache__/
+__pycach*__/
 *.pyc
-artifacts/*.pkl
-artifacts/
+
+# Ignore actual artifac* files
+artifacts/*
+!art*facts/*.dvc
+
+# Ignore actual datas*t files
+data/*
+!data/*.dvc
+
 *.pkl
+*`*
