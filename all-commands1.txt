@@ -1,0 +1,972 @@
+    1    "question":"What is Kubernetes?"
+    2  }'
+    3  minikube status
+    4  kubectl describe pod rag-chatbot-c6c89948b-mjdd5 | grep -A15 "Last State"
+    5  kubectl describe pod $(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+    6  cd ~/LLMOps-RAG-Chatbot
+    7  minikube status
+    8  sudo systemctl status jenkins
+    9  sudo su - jenkins
+   10  kubectl get pods
+   11  kubectl get deployment
+   12  kubectl get svc
+   13  kubectl exec -it deployment/rag-chatbot -- find /app/chroma_db -type f
+   14  tree
+   15  ls -lart
+   16  cd backend/
+   17  ls -lart
+   18  vi rag_pipeline.py 
+   19  git status
+   20  docker build -t babujoseph5757/rag-chatbot:22 ./backend
+   21  cd ..
+   22  docker build -t babujoseph5757/rag-chatbot:22 ./backend
+   23  docker push babujoseph5757/rag-chatbot:22
+   24  kubectl set image deployment/rag-chatbot rag-chatbot=babujoseph5757/rag-chatbot:22
+   25  kubectl rollout status deployment/rag-chatbot
+   26  kubectl exec -it deployment/rag-chatbot -- ls -ltr /app/chroma_db
+   27  curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
+   28    "question":"What is Kubernetes?"
+   29  }'
+   30  kubectl exec -it deployment/rag-chatbot -- python -c "
+   31  from rag_pipeline import get_answer
+   32  print(get_answer('What is Kubernetes?'))
+   33  "
+   34  curl http://localhost:11434/api/tags
+   35  cd backend/
+   36  >rag_pipeline.py 
+   37  vi rag_pipeline.py 
+   38  git status add .
+   39  git add .
+   40  git commit -m "Updated Ollama endpoint for Kubernetes"
+   41  git push origin master
+   42  df -h
+   43  docker system df -v
+   44  kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
+   45  docker rmi babujoseph5757/rag-chatbot:21
+   46  docker rmi babujoseph5757/rag-chatbot-frontend:18
+   47  docker builder prune -a -f
+   48  df -h
+   49  docker rmi babujoseph5757/rag-chatbot:18
+   50  docker rmi babujoseph5757/rag-chatbot:21
+   51  docker rmi babujoseph5757/rag-chatbot-frontend:18
+   52  docker builder prune -a -f
+   53  docker image prune -f
+   54  docker container prune -f
+   55  sudo du -xh /var | sort -h | tail -30
+   56  docker rmi babujoseph5757/rag-chatbot:21
+   57  minikube ssh
+   58  kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
+   59  minikube ssh
+   60  df -f
+   61  df -h
+   62  cd ..
+   63  df -h
+   64  git status
+   65  grep "from .*rag_pipeline" backend/app.py
+   66  ls -ltr backend/chroma_db
+   67  grep "EMAIL_RECIPIENT" Jenkinsfile
+   68  python3 -m pytest tests/ -v
+   69  python3 -m pip show fastapi
+   70  python3 -m pip install --user -r backend/requirements.txt
+   71     
+   72  >Jenkinsfile 
+   73  vi Jenkinsfile 
+   74  git add .
+   75  git commit -m "Fixed backend package imports for pytest"
+   76  git push origin master
+   77  python3 -m pip show fastapi
+   78  python3 -m pytest tests/ -v
+   79  vi Jenkinsfile 
+   80  df -h
+   81  kubectl exec -it deployment/rag-chatbot -- curl http://host.minikube.internal:11434/api/tags
+   82  kubectl exec -it deployment/rag-chatbot -- python -c "
+   83  import requests
+   84  print(requests.get('http://host.minikube.internal:11434/api/tags').status_code)
+   85  "
+   86  kubectl exec -it deployment/rag-chatbot -- python -c "
+   87  import requests
+   88  print(requests.get('http://host.minikube.internal:11434/api/tags').text)
+   89  "
+   90  kubectl exec -it deployment/rag-chatbot -- python -c "
+   91  from langchain_chroma import Chroma
+   92  from langchain_huggingface import HuggingFaceEmbeddings
+   93  db = Chroma(
+   94      persist_directory='chroma_db',
+   95      embedding_function=HuggingFaceEmbeddings(
+   96          model_name='sentence-transformers/all-MiniLM-L6-v2'
+   97      )
+   98  )
+   99  print('Document Count:', db._collection.count())
+  100  "
+  101  kubectl exec -it deployment/rag-chatbot -- python -c "
+  102  from langchain_chroma import Chroma
+  103  from langchain_huggingface import HuggingFaceEmbeddings
+  104  db = Chroma(
+  105      persist_directory='chroma_db',
+  106      embedding_function=HuggingFaceEmbeddings(
+  107          model_name='sentence-transformers/all-MiniLM-L6-v2'
+  108      )
+  109  )
+  110  docs = db.similarity_search(
+  111      'What is Kubernetes?',
+  112      k=3
+  113  )
+  114  print(docs)
+  115  "
+  116  kubectl exec -it deployment/rag-chatbot -- python -c "
+  117  from langchain_chroma import Chroma
+  118  from langchain_huggingface import HuggingFaceEmbeddings
+  119  db = Chroma(
+  120      persist_directory='chroma_db',
+  121      embedding_function=HuggingFaceEmbeddings(
+  122          model_name='sentence-transformers/all-MiniLM-L6-v2'
+  123      )
+  124  )
+  125  docs = db.similarity_search(
+  126      'What is Kubernetes?',
+  127      k=3
+  128  )
+  129  print('Retrieved Docs:')
+  130  print('----------------------------------')
+  131  for d in docs:
+  132      print(d.page_content[:500])
+  133      print('----------------------------------')
+  134  "
+  135  cat src/ingestion.py
+  136  cat src/vectorstore.py
+  137  cd backend/
+  138  >rag_pipeline.py 
+  139  vi rag_pipeline.py 
+  140  cd ..
+  141  git add .
+  142  git commit -m "Improved RAG retrieval with MMR search"
+  143  git push origin master
+  144  nohup kubectl port-forward -n monitoring svc/grafana 3000:80 --address 0.0.0.0 > grafana.log 2>&1 &
+  145  nohup kubectl port-forward -n monitoring svc/prometheus-server 9090:80 --address 0.0.0.0 > prometheus.log 2>&1 &
+  146  curl http://192.168.49.2:30090/metrics | grep rag_
+  147  for i in {1..10}; do curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
+  148    "question":"What is Kubernetes?"
+  149  }'; done
+  150  kubectl exec -it deployment/rag-chatbot -- python -c "
+  151  from rag_pipeline import get_answer
+  152  result = get_answer('What is Kubernetes?')
+  153  print(result)
+  154  "
+  155  from rag_pipeline import get_answer
+  156  print(get_answer("What is Kubernetes?"))
+  157  kubectl exec -it deployment/rag-chatbot -- python -c "
+  158  from langchain_chroma import Chroma
+  159  from langchain_huggingface import HuggingFaceEmbeddings
+  160  db = Chroma(
+  161      persist_directory='chroma_db',
+  162      embedding_function=HuggingFaceEmbeddings(
+  163          model_name='sentence-transformers/all-MiniLM-L6-v2'
+  164      )
+  165  )
+  166  docs = db.max_marginal_relevance_search(
+  167      'What is Kubernetes?',
+  168      k=6,
+  169      fetch_k=20
+  170  )
+  171  print('Retrieved:', len(docs))
+  172  for d in docs:
+  173      print('--------------------')
+  174      print(d.page_content[:500])
+  175  "
+  176  kubectl exec -it deployment/rag-chatbot -- python -c "
+  177  from langchain_chroma import Chroma
+  178  from langchain_huggingface import HuggingFaceEmbeddings
+  179  db = Chroma(
+  180      persist_directory='chroma_db',
+  181      embedding_function=HuggingFaceEmbeddings(
+  182          model_name='sentence-transformers/all-MiniLM-L6-v2'
+  183      )
+  184  )
+  185  print('Collections:')
+  186  print(db._client.list_collections())
+  187  "
+  188  kubectl exec -it deployment/rag-chatbot -- python -c "
+  189  from langchain_chroma import Chroma
+  190  from langchain_huggingface import HuggingFaceEmbeddings
+  191  db = Chroma(
+  192      collection_name='langchain',
+  193      persist_directory='chroma_db',
+  194      embedding_function=HuggingFaceEmbeddings(
+  195          model_name='sentence-transformers/all-MiniLM-L6-v2'
+  196      )
+  197  )
+  198  print('Count:', db._collection.count())
+  199  "
+  200  kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
+  201  kubectl exec -it deployment/rag-chatbot -- python -c "
+  202  from chromadb import PersistentClient
+  203  client = PersistentClient(path='chroma_db')
+  204  print(client.list_collections())
+  205  "
+  206  kubectl exec -it deployment/rag-chatbot -- python -c "
+  207  from chromadb import PersistentClient
+  208  client = PersistentClient(path='chroma_db')
+  209  print(client.list_collections())
+  210  "
+  211  kubectl exec -it deployment/rag-chatbot -- python -c "
+  212  from chromadb import PersistentClient
+  213  client = PersistentClient(path='chroma_db')
+  214  collection = client.get_collection('langchain')
+  215  print('Count:', collection.count())
+  216  "
+  217  python3 -c "
+  218  from chromadb import PersistentClient
+  219  client = PersistentClient(path='backend/chroma_db')
+  220  collection = client.get_collection('langchain')
+  221  print('Host Count:', collection.count())
+  222  "
+  223  docker run --rm -it babujoseph5757/rag-chatbot:22 ls -R /app/chroma_db
+  224  vi src/ingestion.py 
+  225  git add .
+  226  git commit -m "Updated Ollama endpoint for Kubernetes"
+  227  git push origin master
+  228  vi src/ingestion.py 
+  229  cat src/ingestion.py 
+  230  python3 src/ingestion.py
+  231  git status
+  232  df -h
+  233  kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
+  234  kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
+  235  docker run --rm -it babujoseph5757/rag-chatbot:23 ls -R /app
+  236  cat .dockerignore
+  237  vi .dockerignore 
+  238  git add .
+  239  git commit -m "Include Chroma vector database in backend image"
+  240  git push origin master
+  241  kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
+  242  docker run --rm -it babujoseph5757/rag-chatbot:24 ls -R /app
+  243  docker run --rm -it babujoseph5757/rag-chatbot:24 ls -R /app/chroma_db
+  244  cd backend/
+  245  >Dockerfile 
+  246  vi Dockerfile 
+  247  ls-lart
+  248  ls -lart
+  249  docker build -t rag-test ./backend
+  250  cd ..
+  251  docker build -t rag-test ./backend
+  252  docker run --rm -it rag-test ls -R /app/chroma_db
+  253  git add .
+  254  git commit -m "Include ChromaDB vector store in backend image"
+  255  git push origin master
+  256  cd backend/
+  257  >Dockerfile 
+  258  vi Dockerfile 
+  259  cd ..
+  260  cd frontend/
+  261  >Dockerfile 
+  262  vi Dockerfile 
+  263  cd ..
+  264  vi .dockerignore 
+  265  >Jenkinsfile 
+  266  vi Jenkinsfile 
+  267  git add .
+  268  git commit -m "Packaged ChromaDB with backend image"
+  269  git push origin master
+  270  cd backend/
+  271  >Dockerfile 
+  272  vi Dockerfile 
+  273  cd ..
+  274  git add .
+  275  git add backend/Dockerfile Jenkinsfile .dockerignore
+  276  git commit -m "Packaged ChromaDB with backend image"
+  277  git push origin master
+  278  kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
+  279  docker run --rm -it rag-test ls -R /app/chroma_db
+  280  kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
+  281  kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
+  282  kubectl describe deployment rag-chatbot | grep Image
+  283  docker pull babujoseph5757/rag-chatbot:28
+  284  docker run --rm -it babujoseph5757/rag-chatbot:28 ls -R /app
+  285  git ls-files | grep chroma_db
+  286  git check-ignore -v backend/chroma_db/chroma.sqlite3
+  287  ls -lart
+  288  vi .gitignore 
+  289  git add .
+  290  git commit -m "Added Chroma vector database to backend image"
+  291  git push origin master
+  292  ls -larty
+  293  ls -lart
+  294  cd backend/
+  295  ls -lart
+  296  cd ..
+  297  kubectl exec -it deployment/rag-chatbot -- ls -R /app/chroma_db
+  298  kubectl exec -it deployment/rag-chatbot -- python -c "
+  299  from chromadb import PersistentClient
+  300  client = PersistentClient(path='chroma_db')
+  301  collection = client.get_collection('langchain')
+  302  print('Count:', collection.count())
+  303  "
+  304  kubectl exec -it deployment/rag-chatbot -- python -c "
+  305  from langchain_chroma import Chroma
+  306  from langchain_huggingface import HuggingFaceEmbeddings
+  307  db = Chroma(
+  308      collection_name='langchain',
+  309      persist_directory='chroma_db',
+  310      embedding_function=HuggingFaceEmbeddings(
+  311          model_name='sentence-transformers/all-MiniLM-L6-v2'
+  312      )
+  313  )
+  314  docs = db.similarity_search(
+  315      'What is Kubernetes?',
+  316      k=5
+  317  )
+  318  print('Retrieved:', len(docs))
+  319  for d in docs:
+  320      print('---------------------')
+  321      print(d.page_content[:500])
+  322  "
+  323  curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
+  324    "question":"What is Kubernetes?"
+  325  }'
+  326  cd LLMOps-RAG-Chatbot/
+  327  minikube ssh
+  328  minikube start --driver=docker
+  329  df -h
+  330  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  331  kubectl exec -it $POD -- python -c "
+  332  import requests
+  333  r = requests.post(
+  334      'http://host.minikube.internal:11434/api/generate',
+  335      json={
+  336          'model':'llama3',
+  337          'prompt':'What is Kubernetes?',
+  338          'stream':False
+  339      },
+  340      timeout=120
+  341  )
+  342  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  343  kubectl exec -it $POD -- python -c "
+  344  import requests
+  345  r = requests.post(
+  346      'http://host.minikube.internal:11434/api/generate',
+  347      json={
+  348          'model':'llama3',
+  349          'prompt':'What is Kubernetes?',
+  350          'stream':False
+  351      },
+  352      timeout=120
+  353  )
+  354  print(r.status_code)
+  355  print(r.text[:1000])
+  356  "
+  357  time curl http://localhost:11434/api/generate -d '{
+  358    "model":"llama3",
+  359    "prompt":"What is Kubernetes?",
+  360    "stream":false
+  361  }'
+  362  cd backend/
+  363  >rag_pipeline.py 
+  364  vi rag_pipeline.py 
+  365  cd ..
+  366  git add .
+  367  git commit -m "Optimized RAG retrieval and prompt size"
+  368  git push origin master
+  369  minikube ssh
+  370  df -h
+  371  curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
+  372    "question":"What is Kubernetes?"
+  373  }'
+  374  kubectl logs deployment/rag-chatbot -f
+  375  ollama ps
+  376  ollama list
+  377  time curl http://localhost:11434/api/generate -d '{
+  378    "model":"llama3",
+  379    "prompt":"What is Kubernetes?",
+  380    "stream":false
+  381  }'
+  382  cd ..
+  383  time curl http://localhost:11434/api/generate -d '{
+  384    "model":"llama3",
+  385    "prompt":"What is Kubernetes?",
+  386    "stream":false
+  387  }'
+  388  cd LLMOps-RAG-Chatbot/
+  389  sudo journalctl -u jenkins -n 200
+  390  sudo systemctl status jenkins
+  391  cat ~/.bash_history > all_commands.txt
+  392  vi all_commands.txt 
+  393  cd LLMOps-RAG-Chatbot/
+  394  git status
+  395  cat ~/.bash_history > all_commands.txt
+  396  git status
+  397  git add .
+  398  git commit -m "aading all used commands in LLM Project"
+  399  git push origin master
+  400  cd ..
+  401  cd House-Price-Predictor-Mlops/
+  402  cat ~/.bash_history > all_commands.txt
+  403  git add .
+  404  git commit -m "aading all used commands in LLM Project"
+  405  git push origin master
+  406  minikube start --driver=docker
+  407  minikube status
+  408  cd ..
+  409  cd LLMOps-RAG-Chatbot/
+  410  minikube status
+  411  minikube ssh
+  412  df -h
+  413  kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
+  414  ssh-keygen -R ec2-13-211-134-144.ap-southeast-2.compute.amazonaws.com
+  415  vi ~/.ssh/known_hosts
+  416  rm -f ~/.ssh/known_hosts
+  417  cd LLMOps-RAG-Chatbot/
+  418  sudo su - jenkins
+  419  ls -la ~/.ssh
+  420  rm -f ~/.ssh/known_hosts.old
+  421  ssh -T git@github.com
+  422  ls -la ~/.ssh
+  423  rm -f ~/.ssh/known_hosts.old
+  424  ls -la ~/.ssh
+  425  cat ~/.ssh/known_hosts
+  426  minikube ssh
+  427  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  428  kubectl logs $POD -f
+  429  cd LLMOps-RAG-Chatbot/
+  430  curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{"question":"What is Kubernetes?"}'
+  431  for i in {1..10}; do curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{"question":"What is Kubernetes?"}'; done
+  432  cd LLMOps-RAG-Chatbot/
+  433  sudo su - jenkins
+  434  clear
+  435  minikube start --driver=docker
+  436  sudo systemctl status jenkins
+  437  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  438  curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{
+  439    "question":"Explain Kubernetes Pods"
+  440  }'
+  441  cd LLMOps-RAG-Chatbot/
+  442  sudo su - jenkins
+  443  df -h
+  444  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  445  nohup kubectl port-forward -n monitoring svc/grafana 3000:80 --address 0.0.0.0 > grafana.log 2>&1 &
+  446  docker run -d   --name sonarqube   -p 9000:9000   sonarqube:lts-community
+  447  docker logs sonarqube | grep Version
+  448  cd LLMOps-RAG-Chatbot/
+  449  ls -lart
+  450  vi sonar-project.properties
+  451  git add .
+  452  git commit -m "Added SonarQube configuration"
+  453  git push origin master
+  454  cd ..
+  455  cd House-Price-Predictor-Mlops/
+  456  vi sonar-project.properties
+  457  git add .
+  458  git commit -m "Added SonarQube configuration"
+  459  git push origin master
+  460  >Jenkinsfile 
+  461  vi Jenkinsfile 
+  462  git add .
+  463  git commit -m "Added SonarQube configuration"
+  464  git push origin master
+  465  cd ..
+  466  cd LLMOps-RAG-Chatbot/
+  467  >Jenkinsfile 
+  468  vi Jenkinsfile 
+  469  git add .
+  470  git commit -m "Added SonarQube configuration"
+  471  git push origin master
+  472  cd LLMOps-RAG-Chatbot/
+  473  minikube start --driver=docker
+  474  kubectl get pods
+  475  kubectl top pods
+  476  sudo su - jenkins
+  477  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  478  kubectl describe pod $POD | grep -A20 "Last State"
+  479  kubectl top pods -w
+  480  kubectl top pods -wide
+  481  kubectl top pods
+  482  kubectl top node
+  483  minikube ssh free -h
+  484  minikube ssh
+  485  cd backend/
+  486  vi rag_pipeline.py 
+  487  minikube ssh
+  488  cd ..
+  489  git add .
+  490  git commit -m "Improved RAG retrieval and deployment configuration"
+  491  git push origin master
+  492  nohup kubectl port-forward -n monitoring svc/grafana 3000:80 --address 0.0.0.0 > grafana.log 2>&1 &
+  493  nohup kubectl port-forward -n monitoring svc/prometheus-server 9090:80 --address 0.0.0.0 > prometheus.log 2>&1 &
+  494  kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
+  495  POD=$(kubectl get pod -l app=rag-chatbot -o jsonpath='{.items[0].metadata.name}')
+  496  kubectl exec -it $POD -- grep "model=" /app/rag_pipeline.py
+  497  pip install dvc
+  498  pip install --user "prompt-toolkit<3.0.52"
+  499  docker start sonarqube
+  500  docker stop sonarqube
+  501  docker rm sonarqube
+  502  docker run -d   --name sonarqube   -p 9000:9000   sonarqube:lts-community
+  503  docker ps | grep sonarqube
+  504  >Jenkinsfile 
+  505  vi Jenkinsfile 
+  506  git add .
+  507  git commit -m "Improved RAG retrieval and deployment configuration"
+  508  git push origin master
+  509  cd LLMOps-RAG-Chatbot/
+  510  ls -lart
+  511  curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{"question":"What is Kubernetes?"}'
+  512  for i in {1..20}; do curl -X POST http://192.168.49.2:30090/ask -H "Content-Type: application/json" -d '{"question":"What is Kubernetes?"}'; done
+  513  cd LLMOps-RAG-Chatbot/
+  514  minikube start --driver=docker
+  515  docker ps | grep sonarqube
+  516  docker start sonarqube
+  517  docker ps | grep sonarqube
+  518  docker exec -it sonarqube bash
+  519  cd LLMOps-RAG-Chatbot/
+  520  docker ps | grep sonarqube
+  521  sudo systemctl status jenkins
+  522  docker stop sonarqube
+  523  docker rm sonarqube
+  524  docker run -d   --name sonarqube   -p 9000:9000   sonarqube:lts-community
+  525  docker logs -f sonarqube
+  526  docker ps | grep sonarqube
+  527  kubectl get pods
+  528  ls -lart
+  529  vi sonar-project.properties 
+  530  git add .
+  531  git commit -m "sonar project properties"
+  532  git push origin master
+  533  vi Jenkinsfile 
+  534  curl -u sqp_9353d4aceeefaaaa17258ad45158cef1a21317cf: http://13.211.36.209:9000/api/authentication/validate
+  535  vi Jenkinsfile 
+  536  ls -lart
+  537  vi Jenkinsfile 
+  538  cd LLMOps-RAG-Chatbot/
+  539  sudo su - jenkins
+  540  minikube status
+  541  docker ps | grep sonarqube
+  542  vi Jenkinsfile 
+  543  >Jenkinsfile 
+  544  vi Jenkinsfile 
+  545  vi sonar-project.properties 
+  546  git add .
+  547  git commit -m "Updated Jenkinsfile with Trivy disk-space fix"
+  548  git push origin master
+  549  curl -u sqp_9353d4aceeefaaaa17258ad45158cef1a21317cf: "http://13.211.36.209:9000/api/users/current"
+  550  curl -u sqp_9353d4aceeefaaaa17258ad45158cef1a21317cf: "http://13.211.36.209:9000/api/permissions/users?projectKey=rag-chatbot"
+  551  vi sonar-project.properties 
+  552  vi Jenkinsfile 
+  553  git add .
+  554  git commit -m "Fixed So*arQube project key"
+  555  git push origin master
+  556  cd ..
+  557  cd House-Price-Predictor-Mlops/
+  558  ls -lart
+  559  vi sonar-project.properties 
+  560  git add .
+  561  git commit -m "Fixed So*arQube project key"
+  562  git push origin master
+  563  cd ..
+  564  cd LLMOps-RAG-Chatbot/
+  565  cd ..
+  566  cd House-Price-Predictor-Mlops/
+  567  pip install dvc
+  568  git init
+  569  dvc init
+  570  git add .dvc
+  571  git commit -m "Initialize DVC"
+  572  dvc add data/raw.csv
+  573  cd ..
+  574  cd LLMOps-RAG-Chatbot/
+  575  sudo su - jenkins
+  576  df -h
+  577  minikube ssh
+  578  kubectl get pods -l app=rag-chatbot -o wide
+  579  kubectl describe pod -l app=rag-chatbot
+  580  kubectl rollout status deployment/rag-chatbot --timeout=900s
+  581  vi Jenkinsfile 
+  582  git add .
+  583  git commit -m "Increase Kubernetes rollout timeout"
+  584  git push origin master
+  585  df -h
+  586  docker builder prune -a -f
+  587  docker image prune -f
+  588  docker container prune -f
+  589  docker system df
+  590  docker images
+  591   
+  592  docker rmi babujoseph5757/rag-chatbot:30
+  593  docker rmi babujoseph5757/rag-chatbot:31
+  594  docker rmi babujoseph5757/rag-chatbot:32
+  595  docker rmi babujoseph5757/rag-chatbot:33
+  596  docker rmi babujoseph5757/rag-chatbot-frontend:30
+  597  docker rmi babujoseph5757/rag-chatbot-frontend:31
+  598  docker rmi babujoseph5757/rag-chatbot-frontend:32
+  599  docker rmi babujoseph5757/rag-chatbot-frontend:33
+  600  docker builder prune -a -f
+  601  clear
+  602  df -h
+  603  git status
+  604  df -h
+  605  minikube ssh
+  606  df -h
+  607  pwd
+  608  cd ..
+  609  cd House-Price-Predictor-Mlops/
+  610  ls -lart
+  611  minikube ssh
+  612  cd ..
+  613  cd LLMOps-RAG-Chatbot/
+  614  cd ..
+  615  cd House-Price-Predictor-Mlops/
+  616  docker images
+  617  cd ..
+  618  cd LLMOps-RAG-Chatbot/
+  619  df -h
+  620  kubectl get deployment -o custom-columns=NAME:.metadata.name,IMAGE:.spec.template.spec.containers[*].image
+  621  minikube ssh
+  622  docker images
+  623  docker rmi babujoseph5757/rag-chatbot:51
+  624  docker rmi babujoseph5757/rag-chatbot-frontend:51
+  625  docker rmi rag-test:latest
+  626  docker builder prune -f
+  627  df -h
+  628  cd ..
+  629  cd House-Price-Predictor-Mlops/
+  630  git add .dvc .dvcignore
+  631  git commit -m "Initialize DVC"
+  632  dvc add data/housing.csv
+  633  git rm --cached data/housing.csv
+  634  ls -ltr data/housing.csv
+  635  git commit -m "Stop tracking housing dataset with Git"
+  636  dvc add data/housing.csv
+  637  git add data/housing.csv.dvc .gitignore
+  638  git commit -m "Track housing dataset with DVC"
+  639  git status
+  640  dvc status
+  641  git add .
+  642  git add data/housing.csv.dvc .gitignore
+  643  ls -lart
+  644  git commit -m "Track housing dataset with DVC"
+  645  find . -type f | grep -E "csv|pkl|joblib|model|artifacts"
+  646  tree
+  647  find . -type f | grep -E "csv|pkl|joblib|model|artifacts"
+  648  python3 -m venv venv
+  649  source venv/bin/activate
+  650  find . -path "./venv" -prune -o -type f \( -name "*.csv" -o -name "*.pkl" -o -name "*.joblib" \) -print
+  651  git rm --cached data/housing.csv
+  652  git status
+  653  git status --ignored data/housing.csv
+  654  dvc add data/housing.csv
+  655  git ls-files data/housing.csv
+  656  dvc add data/housing.csv
+  657  dvc add artifacts/train.csv
+  658  git check-ignore -v artifacts/train.csv.dvc
+  659  git add .gitignore
+  660  git commit -m "Allow DVC metadata files under artifacts"
+  661  git add .
+  662  git commit -m "Allow DVC metadata files under artifacts"
+  663  dvc add artifacts/train.csv
+  664  git check-ignore -v artifacts/train.csv.dvc
+  665  vi vi .gitignore
+  666  vi .gitignore
+  667  git rm -* --cached artifacts
+  668  git rm -r --cached artifacts
+  669  cat .gitignore
+  670  grep -n "artifacts" .gitignore
+  671  vi .git
+  672  vi .gitignore 
+  673  git check*ignore -v artifacts/train.csv.dvc
+  674  *
+  675  dvc add artifacts/train.csv
+  676  dvc*add artifacts/test.csv
+  677  dvc add artifacts/test.csv
+  678  dvc add ar*ifacts/preprocessor.pkl
+  679  dvc add a*tifacts/model.pkl
+  680  git status
+  681  git add .
+  682  git commit -m "Ad*ed DVC tracking for datasets and m*del artifacts"
+  683  dvc status
+  684  aws s3 mb s3://house-price-dvc-store
+  685  dvc remote add -d s3remote s3://house-price-dvc-store
+  686  dvc remote list
+  687  dvc push
+  688  pip install dvc-s3
+  689  pip install --upgrade botocore
+  690  pip install "botocore>=1.42.97,<1.43.0"
+  691  aws --version
+  692  aws sts get-caller-identity
+  693  dvc push
+  694  pip install dvc-s3
+  695  pip install "botocore>=1.42.97,<1.43.0"
+  696  dvc doctor
+  697  python -c "import dvc_s3; print('dvc-s3 OK')"
+  698  which dvc
+  699  which python
+  700  which pip
+  701  pip show dvc
+  702  pip show dvc-s3
+  703  python -c "
+  704  import dvc
+  705  import dvc_s3
+  706  print('DVC:', dvc.__file__)
+  707  print('DVC-S3:', dvc_s3.__file__)
+  708  "
+  709  pip uninstall -y dvc dvc-s3
+  710  pip install "dvc[s3]"
+  711  history > all_commands.txt
+  712  git status
+  713  git add .
+  714  git commit -m "adding all commands text file"
+  715  git push origin master
+  716  cd House-Price-Predictor-Mlops/
+  717  source venv/bin/activate
+  718  minikube start --driver=docker
+  719  sudo systemctl status jenkins
+  720  df -h
+  721  dvc version
+  722  python -m dvc version
+  723  dvc doctor
+  724  dvc push
+  725  dvc remote add -d s3remote s3://house-price-dvc-store
+  726  aws configure
+  727  aws cli
+  728  aws sts get-caller-identity
+  729  >Jenkinsfile 
+  730  vi Jenkinsfile 
+  731  git add .
+  732  git commit -m "Updated CI/CD Pipeline"
+  733  git push origin master
+  734  sudo su - jenkins
+  735  which dvc
+  736  dvc version
+  737  sudo su - jenkins
+  738  echo $HOME
+  739  which dvc
+  740  which python3
+  741  python3 -m pip show dvc
+  742  python3 -m pip show dvc-s3
+  743  sudo su - jenkins
+  744  python3 -m pip install --user "dvc[s3]"
+  745  cd House-Price-Predictor-Mlops/
+  746  sudo su - jenkins
+  747  python3 -m pip install --user "dvc[s3]"
+  748  dvc pull
+  749  rm -rf ~/.cache/pip
+  750  rm -rf /tmp/pip*
+  751  python -c "import dvc_s3; print('dvc-s3 OK')"
+  752  python -c "
+  753  import dvc
+  754  import dvc_s3
+  755  print('DVC:', dvc.__file__)
+  756  print('DVC-S3:', dvc_s3.__file__)
+  757  "
+  758  which python3
+  759  python3 -c "
+  760  import dvc
+  761  print(dvc.__version__)
+  762  "
+  763  python3 -c "
+  764  import dvc_s3
+  765  print('dvc-s3 OK')
+  766  "
+  767  pip cache purge
+  768  rm -rf ~/.cache/pip
+  769  source venv/bin/activate
+  770  pip install --no-cache-dir dvc-s3
+  771  python -c "
+  772  import dvc_s3
+  773  print('dvc-s3 OK')
+  774  "
+  775  dvc version
+  776  cd House-Price-Predictor-Mlops/
+  777  source venv/bin/activate
+  778  dvc remote list
+  779  dvc pull
+  780  >Jenkinsfile 
+  781  vi Jenkinsfile 
+  782  git add .
+  783  git commit -m "Added DVC Pull to Jenkinsfile"
+  784  git push origin master
+  785  sudo su - jenkins
+  786  whoami
+  787  echo $HOME
+  788  python3 -m pip install --user "dvc[s3]"
+  789  which dvc
+  790  /var/lib/jenkins/.local/bin/dvc version
+  791  sudo su - jenkins
+  792  whoami
+  793  echo $HOME
+  794  which dvc
+  795  ~/House-Price-Predictor-Mlops/venv/bin/dvc
+  796  deactivate
+  797  sudo su - jenkins
+  798  whoami
+  799  echo $HOME
+  800  pwd
+  801  id jenkins
+  802  which python
+  803  sudo -iu jenkins
+  804  whoami
+  805  echo $HOME
+  806  which python3
+  807  python3 --version
+  808  sudo -u jenkins -H bash -c 'whoami && echo $HOME && pwd'
+  809  sudo -u jenkins -H bash -c 'which dvc'
+  810  sudo -u jenkins -H python3 -m pip install --user "dvc[s3]"
+  811  sudo -u jenkins -H aws sts get-caller-identity
+  812  aws sts get-caller-identity
+  813  sudo mkdir -p /var/lib/jenkins/.aws
+  814  sudo cp ~/.aws/credentials /var/lib/jenkins/.aws/
+  815  sudo cp ~/.aws/config /var/lib/jenkins/.aws/
+  816  sudo chown -R jenkins:jenkins /var/lib/jenkins/.aws
+  817  sudo -u jenkins -H aws sts get-caller-identity
+  818  dvc pull
+  819  dvc push
+  820  source venv/bin/activate
+  821  dvc pull
+  822  dvc push
+  823  sudo -u jenkins -H python3 -m pip install --user "dvc[s3]"
+  824  sudo -u jenkins -H /var/lib/jenkins/.local/bin/dvc version
+  825  pip install "prompt-toolkit<3.0.52"
+  826  pip install "python-dateutil==2.9.0"
+  827  df -h
+  828  >Jenkinsfile 
+  829  vi Jenkinsfile 
+  830  git add .
+  831  git commit -m "Added DVC Pull to Jenkinsfile"
+  832  git push origin master
+  833  docker ps | grep sonarqube
+  834  docker start sonarqube
+  835  docker run -d   --name sonarqube   -p 9000:9000   sonarqube:lts-community
+  836  docker run -d   --name sonarqube   -p 9000:9000   -v sonarqube_data:/opt/sonarqube/data   -v sonarqube_extensions:/opt/sonarqube/extensions   sonarqube:lts-community
+  837  docker stop sonarqube
+  838  docker rm sonarqube
+  839  docker run -d   --name sonarqube   -p 9000:9000   -v sonarqube_data:/opt/sonarqube/data   -v sonarqube_extensions:/opt/sonarqube/extensions   sonarqube:lts-community
+  840  docker ps -a | grep sonarqube
+  841  curl -u sqp_7ffcc74c6f54a35919256ddfe7d611f92ae0fd4d: "http://3.107.79.160:9000/api/authentication/validate"
+  842  curl -u sqp_7ffcc74c6f54a35919256ddfe7d611f92ae0fd4d: "http://3.107.79.160:9000/api/projects/search?projects=House-Price-MLOps"
+  843  vi Jenkinsfile 
+  844  >Jenkinsfile 
+  845  vi Jenkinsfile 
+  846  git add .
+  847  git commit -m "Added DVC Pull to Jenkinsfile"
+  848  git push origin master
+  849  git pull --rebase origin master
+  850  git push origin master
+  851  kubectl get deployments
+  852  vi deployment
+  853  ls -latr
+  854  vi deployment.yaml 
+  855  kubectl apply -f deployment.yaml
+  856  kubectl apply -f service.yaml
+  857  kubectl get deploy
+  858  kubectl get pods
+  859  kubectl get svc
+  860  git status
+  861  vi Jenkinsfile 
+  862  cat Jenkinsfile 
+  863  ls -lart
+  864  mkidr k8s/
+  865  mkdir k8s/
+  866  ls -lart
+  867  pwd
+  868  mv -f deployment.yaml service.yaml /home/ec2-user/House-Price-Predictor-Mlops/k8s
+  869  ls -lart
+  870  git add .
+  871  git commit -m "Added Kubernetes deployment manifests"
+  872  git push origin master
+  873  >Jenkinsfile 
+  874  vi Jenkinsfile 
+  875  git add .
+  876  git commit -m "Added Kubernetes deployment manifests"
+  877  git push origin master
+  878  sudo -u jenkins -H bash -c '
+  879  python3 -m pip uninstall -y \
+  880  dvc dvc-s3 boto3 botocore s3fs aiobotocore awscli
+  881  '
+  882  sudo -u jenkins -H bash -c '
+  883  python3 -m pip install --user \
+  884  "dvc[s3]==3.63.0"
+  885  '
+  886  sudo -u jenkins -H bash -c '
+  887  /var/lib/jenkins/.local/bin/dvc doctor
+  888  '
+  889  sudo -u jenkins -H bash -c '
+  890  cd /var/lib/jenkins/workspace/house-price-cicd
+  891  /var/lib/jenkins/.local/bin/dvc pull
+  892  '
+  893  sudo -u jenkins -H bash -c '
+  894  cd /var/lib/jenkins/workspace/house-price-pipeline
+  895  /var/lib/jenkins/.local/bin/dvc pull
+  896  '
+  897  sudo -u jenkins -H bash -c "
+  898  /var/lib/jenkins/.local/bin/pip install --upgrade \
+  899  'dvc[s3]'
+  900  "
+  901  sudo -u jenkins -H bash -c '
+  902  /var/lib/jenkins/.local/bin/dvc doctor
+  903  '
+  904  sudo -u jenkins -H bash -c '
+  905  cd /var/lib/jenkins/workspace/house-price-cicd
+  906  /var/lib/jenkins/.local/bin/dvc pull -v
+  907  '
+  908  sudo -u jenkins -H bash -c '
+  909  cd /var/lib/jenkins/workspace/house-price-cicd
+  910  pwd
+  911  /var/lib/jenkins/.local/bin/dvc remote list
+  912  /var/lib/jenkins/.local/bin/dvc pull -v
+  913  '
+  914  sudo -u jenkins -H bash -c "
+  915  /var/lib/jenkins/.local/bin/pip install --upgrade \
+  916  'dvc[s3]'
+  917  "
+  918  sudo -u jenkins -H bash
+  919  sudo -u jenkins -H bash -c "
+  920  /var/lib/jenkins/.local/bin/pip install \
+  921  'ruamel.yaml>=0.17.11,<0.20'
+  922  "
+  923  sudo -u jenkins -H bash -c "
+  924  /var/lib/jenkins/.local/bin/pip install \
+  925  ruamel.yaml==0.19.1
+  926  "
+  927  sudo -u jenkins -H bash -c "
+  928  /var/lib/jenkins/.local/bin/pip check
+  929  "
+  930  sudo -u jenkins -H bash -c '
+  931  /var/lib/jenkins/.local/bin/dvc doctor
+  932  '
+  933  sudo -u jenkins -H bash -c "
+  934  /var/lib/jenkins/.local/bin/pip list | egrep 'dvc|boto3|botocore|s3fs|aiobotocore|ruamel'
+  935  "
+  936  sudo mkdir -p /var/lib/jenkins/trivy-temp
+  937  sudo chown -R jenkins:jenkins /var/lib/jenkins/trivy-temp
+  938  chmod 755 /var/lib/jenkins/trivy-temp
+  939  sudo mkdir -p /var/lib/jenkins/trivy-temp
+  940  sudo chown -R jenkins:jenkins /var/lib/jenkins/trivy-temp
+  941  chmod 755 /var/lib/jenkins/trivy-temp
+  942  sudo chmod 755 /var/lib/jenkins/trivy-temp
+  943  sudo ls -ld /var/lib/jenkins/trivy-temp
+  944  sudo -u jenkins -H bash -c '
+  945  export TMPDIR=/var/lib/jenkins/trivy-temp
+  946  touch /var/lib/jenkins/trivy-temp/testfile
+  947  ls -lah /var/lib/jenkins/trivy-temp
+  948  '
+  949  >Jenkinsfile 
+  950  vi Jenkinsfile 
+  951  >Jenkinsfile 
+  952  vi Jenkinsfile 
+  953  git add .
+  954  git commit -m "Added Kubernetes deployment manifests"
+  955  git push origin master
+  956  kubectl get secrets
+  957  cd House-Price-Predictor-Mlops/
+  958  source venv/bin/activate
+  959  vi sonar-project.properties 
+  960  rm -f :
+  961  git add .
+  962  git commit -m "Remove invalid file"
+  963  git push origin master
+  964  >Jenkinsfile 
+  965  vi Jenkinsfile 
+  966  rm -f :
+  967  git add .
+  968  git commit -m "Remove invalid file breaking SonarQube"
+  969  git push origin master
+  970  git tag -a v1.0.0 -m "Production-ready House Price MLOps Platform"
+  971  git push origin v1.0.0
+  972  history > all-commands1.txt
