@@ -118,10 +118,9 @@ pipeline {
         }
 
         /*
-         * TEMPORARILY BYPASSED
+         * TEMPORARILY DISABLED
          * Local DVC works.
-         * Jenkins DVC environment still requires cleanup.
-         * Re-enable after DVC dependency chain is stabilized.
+         * Jenkins DVC dependency stack requires cleanup.
          */
         stage('DVC Pull') {
 
@@ -156,6 +155,7 @@ pipeline {
                       -Dsonar.projectKey=House-Price-MLOps \
                       -Dsonar.projectName='House Price MLOps' \
                       -Dsonar.sources=. \
+                      -Dsonar.exclusions=venv/**,.dvc/**,mlruns/**,artifacts/**,__pycache__/**,grafana/** \
                       -Dsonar.python.version=3.9
                     """
                 }
@@ -305,7 +305,7 @@ pipeline {
                 MINIKUBE_IP=$(minikube ip)
 
                 curl -f \
-                  http://${MINIKUBE_IP}:30080/health
+                http://${MINIKUBE_IP}:30080/health
                 '''
             }
         }
