@@ -43,15 +43,21 @@ pipeline {
                 ls -la
 
                 test -f app.py
+
                 test -f Dockerfile
+
                 test -f requirements.txt
-                test -f deployment.yaml
-                test -f service.yaml
+
+                test -f Jenkinsfile
+
+                test -f k8s/deployment.yaml
+
+                test -f k8s/service.yaml
                 '''
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Create Virtual Environment') {
 
             steps {
 
@@ -63,10 +69,44 @@ pipeline {
                 python --version
 
                 pip install --upgrade pip
+                '''
+            }
+        }
+
+        stage('Install Dependencies') {
+
+            steps {
+
+                sh '''
+                . venv/bin/activate
 
                 pip install -r requirements.txt
+                '''
+            }
+        }
+
+        stage('Validate Dependencies') {
+
+            steps {
+
+                sh '''
+                . venv/bin/activate
 
                 pip check
+                '''
+            }
+        }
+
+        stage('Verify DVC') {
+
+            steps {
+
+                sh '''
+                export PATH=/var/lib/jenkins/.local/bin:$PATH
+
+                which dvc
+
+                ${DVC_BIN} doctor
                 '''
             }
         }
@@ -89,7 +129,9 @@ pipeline {
                     sh '''
                     export PATH=/var/lib/jenkins/.local/bin:$PATH
 
-                    ${DVC_BIN} doctor
+                    export AWS_DEFAULT_REGION=ap-south-1
+
+                    ${DVC_BIN} remote list
 
                     ${DVC_BIN} pull
                     '''
@@ -212,6 +254,18 @@ pipeline {
             }
         }
 
+        stage('Verify Kubernetes Secret') {
+
+            steps {
+
+                sh '''
+                export KUBECONFIG=${KUBECONFIG}
+
+                kubectl get secret aws-credentials
+                '''
+            }
+        }
+
         stage('Deploy to Kubernetes') {
 
             steps {
@@ -219,8 +273,15 @@ pipeline {
                 sh '''
                 export KUBECONFIG=${KUBECONFIG}
 
-                kubectl set image deployment/house-price-api \
-                  house-price-api=${DOCKER_IMAGE}:${BUILD_NUMBER}
+                sed -i \
+                "s|image: babujoseph5757/house-price-api:.*|image: ${DOCKER_IMAGE}:${BUILD_NUMBER}|g" \
+                k8s/deployment.yaml
+
+                kubectl apply -f k8s/deployment.yaml
+
+                kubectl apply -f k8s/service.yaml
+
+                kubectl rollout restart deployment house-price-api
 
                 kubectl rollout status deployment/house-price-api \
                   --timeout=300s
@@ -252,7 +313,7 @@ pipeline {
                 MINIKUBE_IP=$(minikube ip)
 
                 curl -f \
-                  http://${MINIKUBE_IP}:30080/health
+                http://${MINIKUBE_IP}:30090/health
                 '''
             }
         }
