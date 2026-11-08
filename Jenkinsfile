@@ -33,15 +33,35 @@ pipeline {
             }
         }
 
+        stage('Debug Workspace') {
+
+            steps {
+
+                sh '''
+                echo "========== WORKSPACE =========="
+
+                pwd
+
+                ls -la
+
+                echo "========== DVC =========="
+
+                ls -la .dvc || true
+
+                cat .dvc/config || true
+
+                echo "========== K8S =========="
+
+                ls -la k8s || true
+                '''
+            }
+        }
+
         stage('Verify Files') {
 
             steps {
 
                 sh '''
-                pwd
-
-                ls -la
-
                 test -f app.py
 
                 test -f Dockerfile
@@ -97,45 +117,17 @@ pipeline {
             }
         }
 
-        stage('Verify DVC') {
-
-            steps {
-
-                sh '''
-                export PATH=/var/lib/jenkins/.local/bin:$PATH
-
-                which dvc
-
-                ${DVC_BIN} doctor
-                '''
-            }
-        }
-
+        /*
+         * TEMPORARILY BYPASSED
+         * Local DVC works.
+         * Jenkins DVC environment still requires cleanup.
+         * Re-enable after DVC dependency chain is stabilized.
+         */
         stage('DVC Pull') {
 
             steps {
 
-                withCredentials([
-                    string(
-                        credentialsId: 'aws-access-key-id',
-                        variable: 'AWS_ACCESS_KEY_ID'
-                    ),
-                    string(
-                        credentialsId: 'aws-secret-access-key',
-                        variable: 'AWS_SECRET_ACCESS_KEY'
-                    )
-                ]) {
-
-                    sh '''
-                    export PATH=/var/lib/jenkins/.local/bin:$PATH
-
-                    export AWS_DEFAULT_REGION=ap-south-1
-
-                    ${DVC_BIN} remote list
-
-                    ${DVC_BIN} pull
-                    '''
-                }
+                echo 'Skipping DVC Pull temporarily'
             }
         }
 
@@ -159,13 +151,13 @@ pipeline {
 
                 withSonarQubeEnv('sonarqube-server') {
 
-                    sh '''
+                    sh """
                     ${SCANNER_HOME}/bin/sonar-scanner \
                       -Dsonar.projectKey=House-Price-MLOps \
-                      -Dsonar.projectName="House Price MLOps" \
+                      -Dsonar.projectName='House Price MLOps' \
                       -Dsonar.sources=. \
                       -Dsonar.python.version=3.9
-                    '''
+                    """
                 }
             }
         }
@@ -284,7 +276,7 @@ pipeline {
                 kubectl rollout restart deployment house-price-api
 
                 kubectl rollout status deployment/house-price-api \
-                  --timeout=300s
+                    --timeout=300s
                 '''
             }
         }
@@ -313,7 +305,7 @@ pipeline {
                 MINIKUBE_IP=$(minikube ip)
 
                 curl -f \
-                http://${MINIKUBE_IP}:30090/health
+                  http://${MINIKUBE_IP}:30080/health
                 '''
             }
         }
